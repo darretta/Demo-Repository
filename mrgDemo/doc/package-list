@@ -1,0 +1,5 @@
+com.jboss.demo.mrg.messaging
+com.jboss.demo.mrg.messaging.data
+com.jboss.demo.mrg.messaging.graphics
+com.jboss.demo.mrg.messaging.handler
+com.jboss.demo.mrg.messaging.tmp
