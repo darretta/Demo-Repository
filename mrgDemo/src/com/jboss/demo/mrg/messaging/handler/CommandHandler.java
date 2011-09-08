@@ -26,6 +26,7 @@ public abstract class CommandHandler extends Thread {
 	
 	/**
 	 * Optional additional processing for command implementations.
+	 * This superclass implementation is a no-op.
 	 * @param p The process.
 	 */
 	protected void handleProcess(Process p) {}
