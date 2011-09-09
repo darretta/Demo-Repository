@@ -32,6 +32,13 @@ public abstract class CommandHandler extends Thread {
 	protected void handleProcess(Process p) {}
 	
 	/**
+	 * Optional additional processing to handle a subsequent
+	 * end of command execution. This should <strong>not</strong> override
+	 * the <code>finalize</code> method. The superclass implementation is a no-op.
+	 */
+	protected void doFinalize() {}
+	
+	/**
 	 * Abstract method to return the command to execute.
 	 * @return The command to execute.
 	 */

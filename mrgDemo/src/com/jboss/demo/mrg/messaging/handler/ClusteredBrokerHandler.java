@@ -1,5 +1,8 @@
 package com.jboss.demo.mrg.messaging.handler;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Handler for a clustered QPID broker.
  * @author Mike Darretta
@@ -11,6 +14,9 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 	
 	/** The data directory */
 	protected String dataDir;
+	
+	/** The QPID cluster member ID */
+	protected String memberId;
 	
 	/** The default cluster name */
 	public static final String DEFAULT_CLUSTER_NAME="demo-cluster";
@@ -88,5 +94,73 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 	protected String getCommand() {
 		return super.getCommand() + " --cluster-name=" + clusterName + " --data-dir=" + dataDir;
 	}
+	
+	/**
+	 * Additiona command processing to extract the QPID cluster member ID.
+	 * @param p The command process.
+	 */
+	@Override
+	protected void handleProcess(Process p) {
+		try {
+			InputStream is = p.getInputStream();
+			StringBuffer buffer = new StringBuffer();
+			boolean done = false;
+			int i = is.read();
+			while (!done) {
+				buffer.append(i);
+				if (isCandidateString(buffer.toString())) {
+					handleProcess(is);
+					done = true;
+				}
+				
+				if (!done) {
+				    i = is.read();
+				}
+			}
+		} catch (IOException io) {
+			io.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Returns if the current command input stream is about to identify the 
+	 * QPID cluster ID string.
+	 * @param s The current command stream output.
+	 * @return True if the output is about to identify the 
+	 * QPID cluster ID string.
+	 */
+	private boolean isCandidateString(String s) {
+		return ((s != null) &&
+				(s.indexOf("Members joined") != -1));
+	}
+	
+	/**
+	 * Additional processing of the command input stream to extract
+	 * the QPID cluster ID.
+	 * @param is The command input stream.
+	 */
+	private void handleProcess(InputStream is) {
+		try {
+			StringBuffer buffer = new StringBuffer();
+			int i = is.read();
+			while (!((char)i == '\n')) {
+				buffer.append(i);
+				i = is.read();
+			}
+			
+			memberId = buffer.toString().trim();
+			
+		} catch (IOException io) {
+			io.printStackTrace();
+		}
+		
+	}
 
+	/**
+	 * Post-processing to shut down the broker.
+	 */
+	@Override
+	protected void doFinalize() {
+		// Add something here
+	}
 }

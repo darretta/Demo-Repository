@@ -55,7 +55,7 @@ class ClientInvoker extends Thread {
             Process p = Runtime.getRuntime().exec(getCommandToExec());
             InputStream is = p.getInputStream();
             int i = is.read();
-            while(i > -1) {
+            while(i != -1) {
                 logHandler.log("" + (char)i);
                 i = is.read();
             }
