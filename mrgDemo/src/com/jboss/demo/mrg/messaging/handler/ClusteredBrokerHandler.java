@@ -9,23 +9,59 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 	/** The cluster name */
 	protected String clusterName;
 	
+	/** The data directory */
+	protected String dataDir;
+	
+	/** The default cluster name */
+	public static final String DEFAULT_CLUSTER_NAME="demo-cluster";
+	
+	/** The default data directory prefix */
+	public static final String DEFAULT_DATA_DIR_PREFIX="/tmp/qpid-data-dir-";
+	
 	/**
-	 * Constructor. This is identical to <code>this(clusterName, 5672)</code>.
-	 * @param clusterName The cluster name.
+	 * Default constructor. This is identical to <code>this(DEFAULT_CLUSTER_NAME)</code>.
 	 */
-	public ClusteredBrokerHandler(String clusterName) {
-		super();
-		this.clusterName = clusterName;
+	public ClusteredBrokerHandler() {
+		this(DEFAULT_CLUSTER_NAME);
 	}
 	
 	/**
-	 * Constructor.
+	 * Constructor for a port. This is identical to <code>this(DEFAULT_CLUSTER_NAME, port)</code>.
+	 * @param port The broker port.
+	 */
+	public ClusteredBrokerHandler(int port) {
+		this(DEFAULT_CLUSTER_NAME, port);
+	}
+	
+	/**
+	 * Constructor for a cluster name.. This is identical to <code>this(clusterName, DEFAULT_PORT)</code>.
+	 * @param clusterName The cluster name.
+	 */
+	public ClusteredBrokerHandler(String clusterName) {
+		this(clusterName, DEFAULT_PORT);
+	}
+	
+	/**
+	 * Constructor for a cluster name and port. This implementation uses an auto-generated 
+	 * data directory name.
 	 * @param clusterName The cluster name.
 	 * @param port The broker port.
 	 */
 	public ClusteredBrokerHandler(String clusterName, int port) {
+		this(clusterName, port, null);
+		this.dataDir = DEFAULT_DATA_DIR_PREFIX + port + "-" + this.hashCode();
+	}
+	
+	/**
+	 * Constructor for non-default attribute values.
+	 * @param clusterName The cluster name.
+	 * @param port The broker port.
+	 * @param dataDir The data directory.
+	 */
+	public ClusteredBrokerHandler(String clusterName, int port, String dataDir) {
 		super(port);
 		this.clusterName = clusterName;
+		this.dataDir = dataDir;
 	}
 
 	/**
@@ -35,6 +71,14 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 	public String getClusterName() {
 		return clusterName;
 	}
+	
+	/**
+	 * Returns the data directory.
+	 * @return The data directory.
+	 */
+	public String getDataDir() {
+		return dataDir;
+	}
 
 	/**
 	 * Returns the command to execute.
@@ -42,7 +86,7 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 	 */
 	@Override
 	protected String getCommand() {
-		return super.getCommand() + " --cluster-name=" + clusterName;
+		return super.getCommand() + " --cluster-name=" + clusterName + " --data-dir=" + dataDir;
 	}
 
 }

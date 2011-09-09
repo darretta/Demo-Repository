@@ -26,6 +26,8 @@ import com.jboss.demo.mrg.messaging.graphics.GraphPoints;
 import com.jboss.demo.mrg.messaging.graphics.LabelTextFieldComponent;
 import com.jboss.demo.mrg.messaging.graphics.LineGraph;
 import com.jboss.demo.mrg.messaging.graphics.ClientUIComponent.ClientType;
+import com.jboss.demo.mrg.messaging.handler.ClusteredBrokerHandler;
+import com.jboss.demo.mrg.messaging.handler.CommandHandler;
 import com.jboss.demo.mrg.messaging.tmp.LogFileGenerator;
 
 /**
@@ -136,9 +138,14 @@ public class MainFrame extends JFrame {
                 	resolveClients(new ClientUIComponent[] { cppClient, jmsClient, pythonClient });
                 
                 Component parent = thisFrame;
+                int port = ClusteredBrokerHandler.DEFAULT_PORT;
+                
                 for (int x=0; x<numBrokers; x++) {
+                	CommandHandler handler = new ClusteredBrokerHandler(port);
+                	handler.start();
+                	
                     LineGraph graph = bindGraphToSource(clients);
-                	LineGraphFrame lgf = new LineGraphFrame(parent, graph, "Broker " + (x+1));
+                	LineGraphFrame lgf = new LineGraphFrame(parent, graph, "Broker:" + (port++));
                     new Thread(lgf).start();
                     parent = lgf;
                 }
