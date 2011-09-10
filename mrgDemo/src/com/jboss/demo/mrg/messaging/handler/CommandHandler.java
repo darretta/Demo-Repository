@@ -13,18 +13,25 @@ public abstract class CommandHandler extends Thread {
 	 * Default constructor.
 	 */
 	public CommandHandler() {}
-
+	
 	/**
-	 * Executes this thread.
+	 * Executes this command.
 	 */
-	@Override
-	public void run() {
+	public void execute() {
 		try {
             this.process = Runtime.getRuntime().exec(getCommand());
             handleProcess();
         } catch (Throwable t) {
             t.printStackTrace();
         }
+	}
+
+	/**
+	 * Executes this command as a thread.
+	 */
+	@Override
+	public void run() {
+		execute();
 	}
 	
 	/**
