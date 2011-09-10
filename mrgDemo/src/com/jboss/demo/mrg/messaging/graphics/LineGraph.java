@@ -10,6 +10,8 @@ import java.util.Iterator;
 
 import javax.swing.JPanel;
 
+import com.jboss.demo.mrg.messaging.handler.CommandHandler;
+
 /**
  * Line graph panel.
  * Mike Darretta
@@ -21,24 +23,48 @@ public class LineGraph extends JPanel {
 
 	/** The points for the line graph */
 	protected Collection<GraphPoints> points;
+	
+	/** The optional command handler that this graph is bound to */
+	protected CommandHandler handler;
 
 	/** Padding from the panel edge for rendering chart */
 	protected final int PAD = 40;
     
 	/**
-	 * Default constructor.
+	 * Default constructor. This version creates an empty set of graph points
+	 * and a null command handler.
 	 */
     public LineGraph() {
-    	points = new ArrayList<GraphPoints> ();
+    	this(null, null);
+    }
+    
+    /**
+     * Constructor for a command handler. This version creates an empty points object.
+     * @param handler The command handler.
+     */
+    public LineGraph(CommandHandler handler) {
+    	this(null, handler);
     }
 
     /**
-     * Constructor for a set of graph points.
+     * Constructor for a set of graph points. This is identical to <code>this(graphPoints, null)</code>.
      * @param graphPoints The graph points.
      */
     public LineGraph(GraphPoints graphPoints) {
+    	this(graphPoints, null);
+    }
+    
+    /**
+     * Constructor.
+     * @param graphPoints The set of graph points.
+     * @param handler The command handler.
+     */
+    public LineGraph(GraphPoints graphPoints, CommandHandler handler) {
+    	this.handler = handler;
     	Collection<GraphPoints> points = new ArrayList<GraphPoints> ();
-    	points.add(graphPoints);
+    	if (graphPoints != null) {
+    	    points.add(graphPoints);
+    	}
         this.points = points;
     }
     
@@ -113,8 +139,13 @@ public class LineGraph extends JPanel {
         GraphUtils.renderLegend(g2, getWidth()-PAD-60, getHeight()-PAD-30, points);
     }
     
+    /**
+     * Destroys any existing owning command via the optional command handler.
+     */
     public void exit() {
-    	// @todo
+    	if (handler != null) {
+    		handler.destroyProcess();
+    	}
     }
     
     /**

@@ -36,7 +36,7 @@ public abstract class CommandHandler extends Thread {
 	/**
 	 * Destroys the process.
 	 */
-	protected void destroyProcess() {
+	public void destroyProcess() {
 		process.destroy();
 	}
 	

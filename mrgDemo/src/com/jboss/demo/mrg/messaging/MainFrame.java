@@ -144,7 +144,7 @@ public class MainFrame extends JFrame {
                 	CommandHandler handler = new ClusteredBrokerHandler(port);
                 	handler.start();
                 	
-                    LineGraph graph = bindGraphToSource(clients);
+                    LineGraph graph = bindGraphToSource(clients, handler);
                 	LineGraphFrame lgf = new LineGraphFrame(parent, graph, "Broker:" + (port++));
                     new Thread(lgf).start();
                     parent = lgf;
@@ -188,11 +188,12 @@ public class MainFrame extends JFrame {
     /**
      * Binds a collection of client types to a line graph.
      * @param clients The client types.
+     * @param handler The command handler.
      * @return The bound line graph.
      */
-    private LineGraph bindGraphToSource(Collection<ClientType> clients) {
+    private LineGraph bindGraphToSource(Collection<ClientType> clients, CommandHandler handler) {
 
-        LineGraph lineGraph = new LineGraph();
+        LineGraph lineGraph = new LineGraph(handler);
                 
         try {
         	Iterator<ClientType> i = clients.iterator();
