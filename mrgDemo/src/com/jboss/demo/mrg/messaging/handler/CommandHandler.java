@@ -5,6 +5,9 @@ package com.jboss.demo.mrg.messaging.handler;
  * @author Mike Darretta
  */
 public abstract class CommandHandler extends Thread {
+	
+	/** The command process */
+	protected Process process;
 
 	/**
 	 * Default constructor.
@@ -17,8 +20,8 @@ public abstract class CommandHandler extends Thread {
 	@Override
 	public void run() {
 		try {
-            Process p = Runtime.getRuntime().exec(getCommand());
-            handleProcess(p);
+            this.process = Runtime.getRuntime().exec(getCommand());
+            handleProcess();
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -27,16 +30,15 @@ public abstract class CommandHandler extends Thread {
 	/**
 	 * Optional additional processing for command implementations.
 	 * This superclass implementation is a no-op.
-	 * @param p The process.
 	 */
-	protected void handleProcess(Process p) {}
+	protected void handleProcess() {}
 	
 	/**
-	 * Optional additional processing to handle a subsequent
-	 * end of command execution. This should <strong>not</strong> override
-	 * the <code>finalize</code> method. The superclass implementation is a no-op.
+	 * Destroys the process.
 	 */
-	protected void doFinalize() {}
+	protected void destroyProcess() {
+		process.destroy();
+	}
 	
 	/**
 	 * Abstract method to return the command to execute.

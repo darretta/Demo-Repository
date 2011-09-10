@@ -1,8 +1,5 @@
 package com.jboss.demo.mrg.messaging.handler;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 /**
  * Handler for a clustered QPID broker.
  * @author Mike Darretta
@@ -96,9 +93,10 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 	}
 	
 	/**
-	 * Additiona command processing to extract the QPID cluster member ID.
+	 * Additional command processing to extract the QPID cluster member ID.
 	 * @param p The command process.
 	 */
+	/*
 	@Override
 	protected void handleProcess(Process p) {
 		try {
@@ -120,7 +118,7 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 		} catch (IOException io) {
 			io.printStackTrace();
 		}
-	}
+	}*/
 	
 	/**
 	 * Returns if the current command input stream is about to identify the 
@@ -129,17 +127,17 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 	 * @return True if the output is about to identify the 
 	 * QPID cluster ID string.
 	 */
-	private boolean isCandidateString(String s) {
+	/*private boolean isCandidateString(String s) {
 		return ((s != null) &&
 				(s.indexOf("Members joined") != -1));
-	}
+	}*/
 	
 	/**
 	 * Additional processing of the command input stream to extract
 	 * the QPID cluster ID.
 	 * @param is The command input stream.
 	 */
-	private void handleProcess(InputStream is) {
+	/*private void handleProcess(InputStream is) {
 		try {
 			StringBuffer buffer = new StringBuffer();
 			int i = is.read();
@@ -154,13 +152,14 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 			io.printStackTrace();
 		}
 		
-	}
+	}*/
 
 	/**
 	 * Post-processing to shut down the broker.
 	 */
+	/*
 	@Override
 	protected void doFinalize() {
 		// Add something here
-	}
+	}*/
 }
