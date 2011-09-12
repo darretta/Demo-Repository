@@ -5,11 +5,12 @@ import java.awt.Container;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileReader;
+//import java.io.FileReader;
 import java.io.IOException;
+//import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+//import java.util.Iterator;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,7 +21,8 @@ import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
 
 import com.jboss.demo.mrg.messaging.data.DataSourceController;
-import com.jboss.demo.mrg.messaging.data.LogFileDataSource;
+//import com.jboss.demo.mrg.messaging.data.LogFileDataSource;
+import com.jboss.demo.mrg.messaging.data.QpidQueueStatsOutputDataSource;
 import com.jboss.demo.mrg.messaging.graphics.ClientUIComponent;
 import com.jboss.demo.mrg.messaging.graphics.GraphPoints;
 import com.jboss.demo.mrg.messaging.graphics.LabelTextFieldComponent;
@@ -28,7 +30,9 @@ import com.jboss.demo.mrg.messaging.graphics.LineGraph;
 import com.jboss.demo.mrg.messaging.graphics.ClientUIComponent.ClientType;
 import com.jboss.demo.mrg.messaging.handler.ClusteredBrokerHandler;
 import com.jboss.demo.mrg.messaging.handler.CommandHandler;
-import com.jboss.demo.mrg.messaging.tmp.LogFileGenerator;
+import com.jboss.demo.mrg.messaging.handler.QpidPerfTestHandler;
+import com.jboss.demo.mrg.messaging.handler.QpidQueueStatsHandler;
+//import com.jboss.demo.mrg.messaging.tmp.LogFileGenerator;
 
 /**
  * Main frame instance.
@@ -149,6 +153,12 @@ public class MainFrame extends JFrame {
                     new Thread(lgf).start();
                     parent = lgf;
                 }
+                
+                if (cppClient.isEnabled()) {
+                	for (int x=0; x < cppClient.getNumActiveClientThreads(); x++) {
+                		new QpidPerfTestHandler(Integer.valueOf(messages.getText()).intValue()).start();
+                	}
+                }
                 /*
                 if (cppRadioBtn.isSelected()) {
                     new ClientInvoker(ClientInvoker.ClientEnum.CPP_CLIENT, directory.getTextField().getText(),
@@ -196,28 +206,35 @@ public class MainFrame extends JFrame {
         LineGraph lineGraph = new LineGraph(handler);
                 
         try {
-        	Iterator<ClientType> i = clients.iterator();
-        	int x=0;
-        	while (i.hasNext()) {
+//        	Iterator<ClientType> i = clients.iterator();
+//        	int x=0;
+//        	while (i.hasNext()) {
         		// Temp log file generation code
-        		LogFileGenerator lfg = new LogFileGenerator();
-        	    lfg.start();
+//        		LogFileGenerator lfg = new LogFileGenerator();
+//        	    lfg.start();
         	    ////////////
+        		int port = ((ClusteredBrokerHandler) handler).getPort();
         	    
-                ClientType client = i.next();
-                LogFileDataSource source = new LogFileDataSource(
-                		new FileReader(lfg.getFile()), ++x);
+//                ClientType client = i.next();
+//                LogFileDataSource source = new LogFileDataSource(
+//                		new FileReader(lfg.getFile()), ++x);
+        		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler(port);
+        		qpidQueueStatsHandler.start();
+        		
+        		QpidQueueStatsOutputDataSource source =
+        			new QpidQueueStatsOutputDataSource(qpidQueueStatsHandler.getProcess().getInputStream());
                 
-                GraphPoints points = new GraphPoints(20, client.getNameVal());
+//                GraphPoints points = new GraphPoints(20, client.getNameVal());
+        		GraphPoints points = new GraphPoints(20, "Message Rate");
                 lineGraph.addPoints(points);
                 new DataSourceController(source, points).start();
-        	}
+//        	}
         
         	this.getContentPane().add(lineGraph);
         	
         } catch (IOException ioe) {
         	ioe.printStackTrace();
-        }
+        } 
         
         return lineGraph;
     }

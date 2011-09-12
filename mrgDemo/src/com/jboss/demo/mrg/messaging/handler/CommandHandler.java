@@ -15,6 +15,14 @@ public abstract class CommandHandler extends Thread {
 	public CommandHandler() {}
 	
 	/**
+	 * Returns the process.
+	 * @return The process.
+	 */
+	public Process getProcess() {
+		return process;
+	}
+	
+	/**
 	 * Executes this command.
 	 */
 	public void execute() {
