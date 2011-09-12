@@ -5,11 +5,14 @@ import java.awt.Container;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 //import java.io.FileReader;
 import java.io.IOException;
 //import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 //import java.util.Iterator;
 
 import javax.swing.JButton;
@@ -47,6 +50,9 @@ public class MainFrame extends JFrame {
     
 	/** Handle to this object for use in anonymous methods */
     private Component thisFrame = this;
+    
+    /** Collection of command handlers to close at exit */
+    private Collection<CommandHandler> handlers;
 
     /**
      * Frame constructor.
@@ -55,6 +61,8 @@ public class MainFrame extends JFrame {
      */
     public MainFrame(String name) throws HeadlessException {
         super(name);
+        this.handlers = new ArrayList<CommandHandler>();
+        
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                                  
         setLayout();
@@ -121,6 +129,16 @@ public class MainFrame extends JFrame {
         		10, SpringLayout.EAST, logScrollPane);
         layout.putConstraint(SpringLayout.SOUTH, contentPane,
         		10, SpringLayout.SOUTH, logScrollPane);
+        
+        
+        this.addWindowListener(new WindowAdapter() {
+        	public void windowClosing(WindowEvent e) {
+        		Iterator<CommandHandler> i = handlers.iterator();
+        		while (i.hasNext()) {
+        			i.next().destroyProcess();
+        		}
+        	}
+        });
 
         clearBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -146,6 +164,7 @@ public class MainFrame extends JFrame {
                 
                 for (int x=0; x<numBrokers; x++) {
                 	CommandHandler handler = new ClusteredBrokerHandler(port);
+                	handlers.add(handler);
                 	handler.start();
                 	
                     LineGraph graph = bindGraphToSource(clients, handler);
@@ -156,7 +175,10 @@ public class MainFrame extends JFrame {
                 
                 if (cppClient.isEnabled()) {
                 	for (int x=0; x < cppClient.getNumActiveClientThreads(); x++) {
-                		new QpidPerfTestHandler(Integer.valueOf(messages.getText()).intValue()).start();
+                		CommandHandler handler = 
+                			new QpidPerfTestHandler(Integer.valueOf(messages.getText()).intValue());
+                		handlers.add(handler);
+                		handler.start();
                 	}
                 }
                 /*
@@ -219,6 +241,7 @@ public class MainFrame extends JFrame {
 //                LogFileDataSource source = new LogFileDataSource(
 //                		new FileReader(lfg.getFile()), ++x);
         		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler(port);
+        		handlers.add(qpidQueueStatsHandler);
         		qpidQueueStatsHandler.start();
         		
         		QpidQueueStatsOutputDataSource source =

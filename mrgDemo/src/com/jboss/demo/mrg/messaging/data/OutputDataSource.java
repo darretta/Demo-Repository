@@ -39,9 +39,7 @@ public abstract class OutputDataSource implements DataSource {
 	public void manage(DataSourceConsumer consumer) {		
 		String line = readLine();
 		while (true) {
-			if (isValid(line)) {
-			    processLine(consumer, line);
-			}
+			processLine(consumer, line);
 			line = readLine();
 		}
 	}
@@ -53,33 +51,7 @@ public abstract class OutputDataSource implements DataSource {
 	 * @param line The line to process.
 	 */
 	protected abstract void processLine(DataSourceConsumer consumer, String line);
-	
-	/**
-	 * Determines if the input line is a valid entry.
-	 * @param line The line to validate.
-	 * @return True if the line is valid.
-	 */
-	protected boolean isValid(String line) {
-		boolean isValid = true;
-		try {
-			Integer.parseInt(line);
-		} catch (Exception e) {
-			isValid = false;
-		}
 		
-		return isValid;
-	}
-	
-	/**
-	 * Determines if the input character is a valid character.
-	 * @param ch The input character.
-	 * @return True if the input character is valid.
-	 */
-	protected boolean isValid(char ch) {
-		int i = (int) ch;
-		return (i > 47 && i < 58);
-	}
-	
 	/**
 	 * Reads a line from the output data source.
 	 * @return The read line, up to a newline indication.
@@ -88,12 +60,9 @@ public abstract class OutputDataSource implements DataSource {
 		StringBuffer buffer = new StringBuffer();
 		try {
 		    char ch = (char) inputStream.read();
-			while (ch != NEWLINE && isValid(ch)) {
+			while (ch != NEWLINE) {
 				buffer.append(ch);
 				ch = (char) inputStream.read();
-				try { 
-					Thread.sleep(1000);
-				} catch (Exception e) {}
 			}
 		} catch (IOException ioe) {
 			ioe.printStackTrace();

@@ -11,6 +11,4 @@ public interface DataSource {
 	 * @param consumer The consumer bound to this data source object.
 	 */
 	public void manage(DataSourceConsumer consumer);
-	
-	public void stop();
 }
