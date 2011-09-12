@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 //import java.io.FileReader;
-import java.io.IOException;
+//import java.io.IOException;
 //import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -227,37 +227,34 @@ public class MainFrame extends JFrame {
 
         LineGraph lineGraph = new LineGraph(handler);
                 
-        try {
-//        	Iterator<ClientType> i = clients.iterator();
-//        	int x=0;
-//        	while (i.hasNext()) {
-        		// Temp log file generation code
-//        		LogFileGenerator lfg = new LogFileGenerator();
-//        	    lfg.start();
-        	    ////////////
-        		int port = ((ClusteredBrokerHandler) handler).getPort();
-        	    
-//                ClientType client = i.next();
-//                LogFileDataSource source = new LogFileDataSource(
-//                		new FileReader(lfg.getFile()), ++x);
-        		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler("localhost", port);
-        		handlers.add(qpidQueueStatsHandler);
-        		qpidQueueStatsHandler.start();
-        		
-        		QpidQueueStatsOutputDataSource source =
-        			new QpidQueueStatsOutputDataSource(qpidQueueStatsHandler.getProcess().getInputStream());
-                
-//                GraphPoints points = new GraphPoints(20, client.getNameVal());
-        		GraphPoints points = new GraphPoints(20, "Message Rate");
-                lineGraph.addPoints(points);
-                new DataSourceController(source, points).start();
-//        	}
-        
-        	this.getContentPane().add(lineGraph);
-        	
-        } catch (IOException ioe) {
-        	ioe.printStackTrace();
-        } 
+
+		// Iterator<ClientType> i = clients.iterator();
+		// int x=0;
+		// while (i.hasNext()) {
+		// Temp log file generation code
+		// LogFileGenerator lfg = new LogFileGenerator();
+		// lfg.start();
+		// //////////
+		int port = ((ClusteredBrokerHandler) handler).getPort();
+
+		// ClientType client = i.next();
+		// LogFileDataSource source = new LogFileDataSource(
+		// new FileReader(lfg.getFile()), ++x);
+		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler(
+				"localhost", port);
+		handlers.add(qpidQueueStatsHandler);
+		qpidQueueStatsHandler.start();
+
+		QpidQueueStatsOutputDataSource source = new QpidQueueStatsOutputDataSource(
+				qpidQueueStatsHandler.getProcess().getInputStream());
+
+		// GraphPoints points = new GraphPoints(20, client.getNameVal());
+		GraphPoints points = new GraphPoints(20, "Message Rate");
+		lineGraph.addPoints(points);
+		new DataSourceController(source, points).start();
+		// }
+
+		this.getContentPane().add(lineGraph);
         
         return lineGraph;
     }
