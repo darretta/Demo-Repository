@@ -7,13 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-//import java.io.FileReader;
-//import java.io.IOException;
-//import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-//import java.util.Iterator;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,7 +20,6 @@ import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
 
 import com.jboss.demo.mrg.messaging.data.DataSourceController;
-//import com.jboss.demo.mrg.messaging.data.LogFileDataSource;
 import com.jboss.demo.mrg.messaging.data.QpidQueueStatsOutputDataSource;
 import com.jboss.demo.mrg.messaging.graphics.ClientUIComponent;
 import com.jboss.demo.mrg.messaging.graphics.GraphPoints;
@@ -35,7 +30,6 @@ import com.jboss.demo.mrg.messaging.handler.ClusteredBrokerHandler;
 import com.jboss.demo.mrg.messaging.handler.CommandHandler;
 import com.jboss.demo.mrg.messaging.handler.QpidPerfTestHandler;
 import com.jboss.demo.mrg.messaging.handler.QpidQueueStatsHandler;
-//import com.jboss.demo.mrg.messaging.tmp.LogFileGenerator;
 
 /**
  * Main frame instance.
@@ -174,7 +168,9 @@ public class MainFrame extends JFrame {
                 }
                 
                 if (cppClient.isEnabled()) {
-                    pause(100);
+                	// Give the brokers 1 second to start up...
+                    pause(1000);
+                    
                 	for (int x=0; x < cppClient.getNumActiveClientThreads(); x++) {
                 		CommandHandler handler = 
                 			new QpidPerfTestHandler(Integer.valueOf(messages.getText()).intValue());
@@ -227,36 +223,29 @@ public class MainFrame extends JFrame {
     private LineGraph bindGraphToSource(Collection<ClientType> clients, CommandHandler handler) {
 
         LineGraph lineGraph = new LineGraph(handler);
-                
-
-		// Iterator<ClientType> i = clients.iterator();
-		// int x=0;
-		// while (i.hasNext()) {
-		// Temp log file generation code
-		// LogFileGenerator lfg = new LogFileGenerator();
-		// lfg.start();
-		// //////////
 		int port = ((ClusteredBrokerHandler) handler).getPort();
 
-		// ClientType client = i.next();
-		// LogFileDataSource source = new LogFileDataSource(
-		// new FileReader(lfg.getFile()), ++x);
 		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler(
 				"localhost", port);
 		handlers.add(qpidQueueStatsHandler);
 		qpidQueueStatsHandler.start();
 		
-		// Wait 100 milliseconds to give the thread a chance to initialize.
+		// Wait 100 milliseconds to give the qpid-queue-stats thread a chance to initialize.
 		pause(100);
 
 		QpidQueueStatsOutputDataSource source = new QpidQueueStatsOutputDataSource(
-				qpidQueueStatsHandler.getProcess().getInputStream());
+				qpidQueueStatsHandler.getProcess().getInputStream(), QpidQueueStatsOutputDataSource.ENQ_RATE_COLUMN);
 
-		// GraphPoints points = new GraphPoints(20, client.getNameVal());
-		GraphPoints points = new GraphPoints(20, "Message Rate");
+		GraphPoints points = new GraphPoints(20, "Enqueue Rate");
 		lineGraph.addPoints(points);
 		new DataSourceController(source, points).start();
-		// }
+
+		QpidQueueStatsOutputDataSource source2 = new QpidQueueStatsOutputDataSource(
+				qpidQueueStatsHandler.getProcess().getInputStream(), QpidQueueStatsOutputDataSource.DEQ_RATE_COLUMN);
+
+		GraphPoints points2 = new GraphPoints(20, "Dequeue Rate");
+		lineGraph.addPoints(points2);
+		new DataSourceController(source2, points2).start();
 
 		this.getContentPane().add(lineGraph);
         

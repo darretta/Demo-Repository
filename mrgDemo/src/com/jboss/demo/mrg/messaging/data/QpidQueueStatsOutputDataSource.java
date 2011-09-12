@@ -11,12 +11,31 @@ import com.jboss.demo.mrg.messaging.data.DataSourceConsumer;
  */
 public class QpidQueueStatsOutputDataSource extends OutputDataSource {
 	
+	/** The column to process */
+	protected int columnToProcess;
+	
+	/** The queue name column number */
+	public static final int QUEUE_NAME_COLUMN = 0;
+	
+	/** The seconds column number */
+	public static final int SEC_COLUMN = 1;
+	
+	/** The queue depth column number */
+	public static final int DEPTH_COLUMN = 2;
+	
+	/** The enqueue rate column number */
+	public static final int ENQ_RATE_COLUMN = 3;
+	
+	/** The dequeue rate column number */
+	public static final int DEQ_RATE_COLUMN = 4;
+	
 	/**
 	 * Constructor.
 	 * @param inputStream The input stream.
 	 */
-	public QpidQueueStatsOutputDataSource(InputStream inputStream) {
+	public QpidQueueStatsOutputDataSource(InputStream inputStream, int columnToProcess) {
 		super(inputStream);
+		this.columnToProcess = columnToProcess;
 	}
 	
 	/**
@@ -30,10 +49,10 @@ public class QpidQueueStatsOutputDataSource extends OutputDataSource {
 		StringTokenizer tokenizer = new StringTokenizer(line);
 		String token = null;
 		
-		if (tokenizer.countTokens() > 3) {
+		if (tokenizer.countTokens() > (columnToProcess-1)) {
 			token = tokenizer.nextToken();
 			if (token.contains("qpid-perftest0")) {
-				for (int x = 1; x < 4; x++) {
+				for (int x = 1; x < columnToProcess; x++) {
 					token = tokenizer.nextToken();
 				}
 
