@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -144,67 +146,88 @@ public class MainFrame extends JFrame {
             }
         });
 
-        executeBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-//                LogHandler logHandler = new JTextAreaLogHandler(logTextArea);
-//                final int numMessagesPerThread = Integer.parseInt(messages.getText());
-                final int numBrokers = Integer.parseInt(threads.getText());
-                                
-//                Collection<ClientType> clients = 
-//                	resolveClients(new ClientUIComponent[] { cppClient, jmsClient, pythonClient });
-                
-                Component parent = thisFrame;
-                int port = ClusteredBrokerHandler.DEFAULT_PORT;
-                
-                for (int x=0; x<numBrokers; x++) {
-                	CommandHandler handler = new ClusteredBrokerHandler(port);
-                	handlers.add(handler);
-                	handler.start();
-                	
-//                    LineGraph graph = bindGraphToSource(clients, handler);
-                    LineGraph lineGraph = new LineGraph(handler);
+		executeBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					// LogHandler logHandler = new
+					// JTextAreaLogHandler(logTextArea);
+					// final int numMessagesPerThread =
+					// Integer.parseInt(messages.getText());
+					final int numBrokers = Integer.parseInt(threads.getText());
 
-                    bindGraphToSource(lineGraph, QpidQueueStatsOutputDataSource.ENQ_RATE_COLUMN, "Enqueue Rate");
-                    bindGraphToSource(lineGraph, QpidQueueStatsOutputDataSource.DEQ_RATE_COLUMN, "Dequeue Rate");
-                	LineGraphFrame lgf = new LineGraphFrame(parent, lineGraph, "Broker:" + (port++));
-                    new Thread(lgf).start();
-                    parent = lgf;
-                    
-                	// Give the brokers 1 second each to start up...
-                    pause(1000);
-                }
-                
-                if (cppClient.isEnabled()) {                    
-                	for (int x=0; x < cppClient.getNumActiveClientThreads(); x++) {
-                		CommandHandler handler = 
-                			new QpidPerfTestHandler(Integer.valueOf(messages.getText()).intValue());
-                		handlers.add(handler);
-                		handler.start();
-                	}
-                }
-                /*
-                if (cppRadioBtn.isSelected()) {
-                    new ClientInvoker(ClientInvoker.ClientEnum.CPP_CLIENT, directory.getTextField().getText(),
-                        numMessagesPerThread, numThreads, logHandler).start();
-                } else if (javaRadioBtn.isSelected()) {
-                    new ClientInvoker(ClientInvoker.ClientEnum.JAVA_CLIENT, directory.getTextField().getText(),
-                        numMessagesPerThread, numThreads, logHandler).start();
-                } else { 
-                    new ClientInvoker(ClientInvoker.ClientEnum.JMS_CLIENT, directory.getTextField().getText(),
-                        numMessagesPerThread, numThreads, logHandler).start();
-                }
-                */
-            }
-        });
+					// Collection<ClientType> clients =
+					// resolveClients(new ClientUIComponent[] { cppClient,
+					// jmsClient, pythonClient });
+
+					Component parent = thisFrame;
+					int port = ClusteredBrokerHandler.DEFAULT_PORT;
+
+					for (int x = 0; x < numBrokers; x++) {
+						CommandHandler handler = new ClusteredBrokerHandler(
+								port);
+						handlers.add(handler);
+						handler.start();
+
+						LineGraph lineGraph = new LineGraph(handler);
+						
+						String ipAddress = InetAddress.getLocalHost().getHostAddress();
+
+						bindGraphToSource(lineGraph,
+								ipAddress,
+								port,
+								QpidQueueStatsOutputDataSource.ENQ_RATE_COLUMN,
+								"Enqueue Rate");
+						bindGraphToSource(lineGraph,
+								ipAddress,
+								port,
+								QpidQueueStatsOutputDataSource.DEQ_RATE_COLUMN,
+								"Dequeue Rate");
+						LineGraphFrame lgf = new LineGraphFrame(parent,
+								lineGraph, ipAddress + ":" + (port++));
+						new Thread(lgf).start();
+						parent = lgf;
+
+						// Give the brokers 1 second each to start up...
+						pause(1000);
+					}
+
+					if (cppClient.isEnabled()) {
+						for (int x = 0; x < cppClient
+								.getNumActiveClientThreads(); x++) {
+							CommandHandler handler = new QpidPerfTestHandler(
+									Integer.valueOf(messages.getText())
+											.intValue());
+							handlers.add(handler);
+							handler.start();
+						}
+					}
+					/*
+					 * if (cppRadioBtn.isSelected()) { new
+					 * ClientInvoker(ClientInvoker.ClientEnum.CPP_CLIENT,
+					 * directory.getTextField().getText(), numMessagesPerThread,
+					 * numThreads, logHandler).start(); } else if
+					 * (javaRadioBtn.isSelected()) { new
+					 * ClientInvoker(ClientInvoker.ClientEnum.JAVA_CLIENT,
+					 * directory.getTextField().getText(), numMessagesPerThread,
+					 * numThreads, logHandler).start(); } else { new
+					 * ClientInvoker(ClientInvoker.ClientEnum.JMS_CLIENT,
+					 * directory.getTextField().getText(), numMessagesPerThread,
+					 * numThreads, logHandler).start(); }
+					 */
+				} catch (UnknownHostException uhe) {
+					uhe.printStackTrace();
+				}
+			}
+		});
         
         this.pack();
     }
     
-    /**
-     * Resolves all the select client components for thread distinction.
-     * @param clientComponents The client components.
-     * @return An array of client types corresponding to each client thread.
-     */
+//    /**
+//     * Resolves all the select client components for thread distinction.
+//     * @param clientComponents The client components.
+//     * @return An array of client types corresponding to each client thread.
+//     */
 //    private Collection<ClientType> resolveClients(ClientUIComponent[] clientComponents) {
 //    	
 //    	Collection<ClientType> clients = new ArrayList<ClientType> ();
@@ -220,15 +243,16 @@ public class MainFrame extends JFrame {
     
     /**
      * Binds a graph to it's data sources.
-     * @param handler The command handler.
-     * @param columnNumber The column number of the qpid-queue-stats output
+     * @param lineGraph The line graph to bind to.
+     * @param ipAddress The address of the data source.
+     * @param port The port number for the data source.
+     * @param columnNumber The column number of the qpid-queue-stats output.
+     * @param graphName The name of the graph for presentation.
      */
-    private void bindGraphToSource(LineGraph lineGraph, int columnNumber, String graphName) {
+    private void bindGraphToSource(LineGraph lineGraph, String ipAddress, int port, 
+    		int columnNumber, String graphName) {
 
-		int port = ((ClusteredBrokerHandler) lineGraph.getHandler()).getPort();
-
-		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler(
-				"localhost", port);
+		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler(ipAddress, port);
 		handlers.add(qpidQueueStatsHandler);
 		qpidQueueStatsHandler.start();
 		
