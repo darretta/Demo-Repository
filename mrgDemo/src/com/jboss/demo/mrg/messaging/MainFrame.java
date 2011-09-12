@@ -240,7 +240,7 @@ public class MainFrame extends JFrame {
 //                ClientType client = i.next();
 //                LogFileDataSource source = new LogFileDataSource(
 //                		new FileReader(lfg.getFile()), ++x);
-        		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler(port);
+        		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler("localhost", port);
         		handlers.add(qpidQueueStatsHandler);
         		qpidQueueStatsHandler.start();
         		
