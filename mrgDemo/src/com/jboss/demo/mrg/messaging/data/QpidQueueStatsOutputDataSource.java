@@ -37,7 +37,7 @@ public class QpidQueueStatsOutputDataSource extends OutputDataSource {
 					token = tokenizer.nextToken();
 				}
 
-				consumer.update(Integer.valueOf(token));
+				consumer.update(Double.valueOf(token).intValue());
 			}
 		}
 	}

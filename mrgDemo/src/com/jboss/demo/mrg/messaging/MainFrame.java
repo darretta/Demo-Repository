@@ -174,6 +174,7 @@ public class MainFrame extends JFrame {
                 }
                 
                 if (cppClient.isEnabled()) {
+                    pause(100);
                 	for (int x=0; x < cppClient.getNumActiveClientThreads(); x++) {
                 		CommandHandler handler = 
                 			new QpidPerfTestHandler(Integer.valueOf(messages.getText()).intValue());
@@ -246,9 +247,7 @@ public class MainFrame extends JFrame {
 		qpidQueueStatsHandler.start();
 		
 		// Wait 100 milliseconds to give the thread a chance to initialize.
-		try {
-			Thread.sleep(100);
-		} catch (Exception e) {}
+		pause(100);
 
 		QpidQueueStatsOutputDataSource source = new QpidQueueStatsOutputDataSource(
 				qpidQueueStatsHandler.getProcess().getInputStream());
@@ -282,5 +281,17 @@ public class MainFrame extends JFrame {
         layout.putConstraint(SpringLayout.NORTH, component,
                 northRelativeLocation,
                 SpringLayout.NORTH, northRelativeComponent);
+    }
+    
+    /**
+     * Utility method to pause thread execution for managing multiple threads.
+     * @param milliseconds The number of milliseconds to pause.
+     */
+    private void pause(int milliseconds) {
+    	try {
+    		Thread.sleep(milliseconds);
+    	} catch (InterruptedException ie) {
+    		ie.printStackTrace();
+    	}
     }
 }
