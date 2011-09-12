@@ -57,6 +57,6 @@ public class QpidQueueStatsHandler extends CommandHandler {
 	 */
 	@Override
 	protected String getCommand() {
-		return "qpid-queue-stats -a " + hostname + ":" + port + " | grep perftest0";
+		return "qpid-queue-stats -a " + hostname + ":" + port;
 	}
 }

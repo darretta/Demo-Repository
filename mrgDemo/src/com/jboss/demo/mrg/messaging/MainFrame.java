@@ -244,6 +244,11 @@ public class MainFrame extends JFrame {
 				"localhost", port);
 		handlers.add(qpidQueueStatsHandler);
 		qpidQueueStatsHandler.start();
+		
+		// Wait 100 milliseconds to give the thread a chance to initialize.
+		try {
+			Thread.sleep(100);
+		} catch (Exception e) {}
 
 		QpidQueueStatsOutputDataSource source = new QpidQueueStatsOutputDataSource(
 				qpidQueueStatsHandler.getProcess().getInputStream());

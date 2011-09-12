@@ -31,11 +31,14 @@ public class QpidQueueStatsOutputDataSource extends OutputDataSource {
 		String token = null;
 		
 		if (tokenizer.countTokens() > 3) {
-			for (int x = 0; x < 4; x++) {
-				token = tokenizer.nextToken();
-			}
+			token = tokenizer.nextToken();
+			if (token.contains("qpid-perftest0")) {
+				for (int x = 1; x < 4; x++) {
+					token = tokenizer.nextToken();
+				}
 
-			consumer.update(Integer.valueOf(token));
+				consumer.update(Integer.valueOf(token));
+			}
 		}
 	}
 }
