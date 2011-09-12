@@ -28,6 +28,7 @@ import com.jboss.demo.mrg.messaging.graphics.GraphPoints;
 import com.jboss.demo.mrg.messaging.graphics.LabelTextFieldComponent;
 import com.jboss.demo.mrg.messaging.graphics.LineGraph;
 import com.jboss.demo.mrg.messaging.graphics.ClientUIComponent.ClientType;
+import com.jboss.demo.mrg.messaging.handler.BrokerHandler;
 import com.jboss.demo.mrg.messaging.handler.ClusteredBrokerHandler;
 import com.jboss.demo.mrg.messaging.handler.CommandHandler;
 import com.jboss.demo.mrg.messaging.handler.QpidPerfTestHandler;
@@ -49,6 +50,9 @@ public class MainFrame extends JFrame {
     
     /** Collection of command handlers to close at exit */
     private Collection<CommandHandler> handlers;
+    
+    /** The current broker port number, initialized to <code>BrokerHandler.DEFAULT_PORT</code> */
+    private int currentPort = BrokerHandler.DEFAULT_PORT;
 
     /**
      * Frame constructor.
@@ -160,11 +164,9 @@ public class MainFrame extends JFrame {
 					// jmsClient, pythonClient });
 
 					Component parent = thisFrame;
-					int port = ClusteredBrokerHandler.DEFAULT_PORT;
-
+					
 					for (int x = 0; x < numBrokers; x++) {
-						CommandHandler handler = new ClusteredBrokerHandler(
-								port);
+						CommandHandler handler = new ClusteredBrokerHandler(currentPort);
 						handlers.add(handler);
 						handler.start();
 
@@ -174,16 +176,16 @@ public class MainFrame extends JFrame {
 
 						bindGraphToSource(lineGraph,
 								ipAddress,
-								port,
+								currentPort,
 								QpidQueueStatsOutputDataSource.ENQ_RATE_COLUMN,
 								"Enqueue Rate");
 						bindGraphToSource(lineGraph,
 								ipAddress,
-								port,
+								currentPort,
 								QpidQueueStatsOutputDataSource.DEQ_RATE_COLUMN,
 								"Dequeue Rate");
 						LineGraphFrame lgf = new LineGraphFrame(parent,
-								lineGraph, ipAddress + ":" + (port++));
+								lineGraph, ipAddress + ":" + (currentPort++));
 						new Thread(lgf).start();
 						parent = lgf;
 
