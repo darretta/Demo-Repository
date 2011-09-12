@@ -99,6 +99,14 @@ public class LineGraph extends JPanel {
     public void addPoints(GraphPoints points) {
         this.points.add(points);
     }
+    
+    /**
+     * Returns the command handler.
+     * @return The command handler.
+     */
+    public CommandHandler getHandler() {
+    	return handler;
+    }
 
     /**
      * Paints the component.

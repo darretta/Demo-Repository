@@ -150,8 +150,8 @@ public class MainFrame extends JFrame {
 //                final int numMessagesPerThread = Integer.parseInt(messages.getText());
                 final int numBrokers = Integer.parseInt(threads.getText());
                                 
-                Collection<ClientType> clients = 
-                	resolveClients(new ClientUIComponent[] { cppClient, jmsClient, pythonClient });
+//                Collection<ClientType> clients = 
+//                	resolveClients(new ClientUIComponent[] { cppClient, jmsClient, pythonClient });
                 
                 Component parent = thisFrame;
                 int port = ClusteredBrokerHandler.DEFAULT_PORT;
@@ -161,16 +161,20 @@ public class MainFrame extends JFrame {
                 	handlers.add(handler);
                 	handler.start();
                 	
-                    LineGraph graph = bindGraphToSource(clients, handler);
-                	LineGraphFrame lgf = new LineGraphFrame(parent, graph, "Broker:" + (port++));
+//                    LineGraph graph = bindGraphToSource(clients, handler);
+                    LineGraph lineGraph = new LineGraph(handler);
+
+                    bindGraphToSource(lineGraph, QpidQueueStatsOutputDataSource.ENQ_RATE_COLUMN, "Enqueue Rate");
+                    bindGraphToSource(lineGraph, QpidQueueStatsOutputDataSource.DEQ_RATE_COLUMN, "Dequeue Rate");
+                	LineGraphFrame lgf = new LineGraphFrame(parent, lineGraph, "Broker:" + (port++));
                     new Thread(lgf).start();
                     parent = lgf;
+                    
+                	// Give the brokers 1 second each to start up...
+                    pause(1000);
                 }
                 
-                if (cppClient.isEnabled()) {
-                	// Give the brokers 1 second to start up...
-                    pause(1000);
-                    
+                if (cppClient.isEnabled()) {                    
                 	for (int x=0; x < cppClient.getNumActiveClientThreads(); x++) {
                 		CommandHandler handler = 
                 			new QpidPerfTestHandler(Integer.valueOf(messages.getText()).intValue());
@@ -201,29 +205,27 @@ public class MainFrame extends JFrame {
      * @param clientComponents The client components.
      * @return An array of client types corresponding to each client thread.
      */
-    private Collection<ClientType> resolveClients(ClientUIComponent[] clientComponents) {
-    	
-    	Collection<ClientType> clients = new ArrayList<ClientType> ();
-    	for (int x=0; x < clientComponents.length; x++) {
-    		int numClients = clientComponents[x].getNumActiveClientThreads();
-    		for (int y=0; y < numClients; y++) {
-    			clients.add(clientComponents[x].getClientType());
-    		}
-    	}
-    	
-    	return clients;
-    }
+//    private Collection<ClientType> resolveClients(ClientUIComponent[] clientComponents) {
+//    	
+//    	Collection<ClientType> clients = new ArrayList<ClientType> ();
+//    	for (int x=0; x < clientComponents.length; x++) {
+//    		int numClients = clientComponents[x].getNumActiveClientThreads();
+//    		for (int y=0; y < numClients; y++) {
+//    			clients.add(clientComponents[x].getClientType());
+//    		}
+//    	}
+//    	
+//    	return clients;
+//    }
     
     /**
-     * Binds a collection of client types to a line graph.
-     * @param clients The client types.
+     * Binds a graph to it's data sources.
      * @param handler The command handler.
-     * @return The bound line graph.
+     * @param columnNumber The column number of the qpid-queue-stats output
      */
-    private LineGraph bindGraphToSource(Collection<ClientType> clients, CommandHandler handler) {
+    private void bindGraphToSource(LineGraph lineGraph, int columnNumber, String graphName) {
 
-        LineGraph lineGraph = new LineGraph(handler);
-		int port = ((ClusteredBrokerHandler) handler).getPort();
+		int port = ((ClusteredBrokerHandler) lineGraph.getHandler()).getPort();
 
 		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler(
 				"localhost", port);
@@ -234,22 +236,12 @@ public class MainFrame extends JFrame {
 		pause(100);
 
 		QpidQueueStatsOutputDataSource source = new QpidQueueStatsOutputDataSource(
-				qpidQueueStatsHandler.getProcess().getInputStream(), QpidQueueStatsOutputDataSource.ENQ_RATE_COLUMN);
+				qpidQueueStatsHandler.getProcess().getInputStream(), columnNumber);
 
-		GraphPoints points = new GraphPoints(20, "Enqueue Rate");
+		GraphPoints points = new GraphPoints(20, graphName);
 		lineGraph.addPoints(points);
+
 		new DataSourceController(source, points).start();
-
-		QpidQueueStatsOutputDataSource source2 = new QpidQueueStatsOutputDataSource(
-				qpidQueueStatsHandler.getProcess().getInputStream(), QpidQueueStatsOutputDataSource.DEQ_RATE_COLUMN);
-
-		GraphPoints points2 = new GraphPoints(20, "Dequeue Rate");
-		lineGraph.addPoints(points2);
-		new DataSourceController(source2, points2).start();
-
-		this.getContentPane().add(lineGraph);
-        
-        return lineGraph;
     }
 
     /**
