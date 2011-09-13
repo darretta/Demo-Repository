@@ -10,7 +10,9 @@ public class Main {
      * @param argv No expected arguments.
      */
     public static final void main(String[] argv) {
-        MainFrame frame = new MainFrame("MRG Messaging 2.0 Demo");
+        MainFrame frame = new MainFrame(
+        	(String) Properties.getProperties().getProperty(
+        		Properties.DEMO_NAME_STR));
         frame.setVisible(true);
     }
 }

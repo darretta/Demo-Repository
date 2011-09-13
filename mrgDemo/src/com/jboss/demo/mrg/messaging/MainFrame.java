@@ -28,7 +28,6 @@ import com.jboss.demo.mrg.messaging.graphics.GraphPoints;
 import com.jboss.demo.mrg.messaging.graphics.LabelTextFieldComponent;
 import com.jboss.demo.mrg.messaging.graphics.LineGraph;
 import com.jboss.demo.mrg.messaging.graphics.ClientUIComponent.ClientType;
-import com.jboss.demo.mrg.messaging.handler.BrokerHandler;
 import com.jboss.demo.mrg.messaging.handler.ClusteredBrokerHandler;
 import com.jboss.demo.mrg.messaging.handler.CommandHandler;
 import com.jboss.demo.mrg.messaging.handler.QpidPerfTestHandler;
@@ -51,8 +50,9 @@ public class MainFrame extends JFrame {
     /** Collection of command handlers to close at exit */
     private Collection<CommandHandler> handlers;
     
-    /** The current broker port number, initialized to <code>BrokerHandler.DEFAULT_PORT</code> */
-    private int currentPort = BrokerHandler.DEFAULT_PORT;
+    /** The current broker port number, initialized to the default broker port */
+    private int currentPort = (Integer) Properties.getProperties().getProperty(
+    		Properties.DEFAULT_BROKER_PORT_STR);
 
     /**
      * Frame constructor.
@@ -172,7 +172,9 @@ public class MainFrame extends JFrame {
 
 						LineGraph lineGraph = new LineGraph(handler);
 						
-						String ipAddress = InetAddress.getLocalHost().getHostAddress();
+						String hostname = (String) Properties.getProperties().getProperty(
+								Properties.DEFAULT_HOSTNAME_STR);
+						String ipAddress = InetAddress.getByName(hostname).getHostAddress();
 
 						bindGraphToSource(lineGraph,
 								ipAddress,

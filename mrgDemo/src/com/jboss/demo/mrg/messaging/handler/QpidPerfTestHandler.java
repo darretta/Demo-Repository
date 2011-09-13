@@ -1,5 +1,7 @@
 package com.jboss.demo.mrg.messaging.handler;
 
+import com.jboss.demo.mrg.messaging.Properties;
+
 /**
  * Handler for the qpid-perftest command.
  * @author Mike Darretta
@@ -10,7 +12,9 @@ public class QpidPerfTestHandler extends CommandHandler {
 	protected int numMessages;
 	
 	/** The default number of messages to send */
-	public static final int DEFAULT_NUM_MESSAGES = 500000;
+	public static final int DEFAULT_NUM_MESSAGES = 
+		(Integer) Properties.getProperties().getProperty(
+				Properties.DEFAULT_NUM_MSGS_PER_CLIENT_STR);
 
 	/**
 	 * Default constructor for the default number of messages.
@@ -41,6 +45,7 @@ public class QpidPerfTestHandler extends CommandHandler {
 	 */
 	@Override
 	protected String getCommand() {
-		return "qpid-perftest --count " + numMessages;
+		return Properties.getProperties().getProperty(
+				Properties.QPID_PERF_TEST_CMD_STR) + " --count " + numMessages;
 	}
 }

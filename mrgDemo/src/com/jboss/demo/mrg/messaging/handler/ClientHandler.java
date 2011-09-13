@@ -1,5 +1,7 @@
 package com.jboss.demo.mrg.messaging.handler;
 
+import com.jboss.demo.mrg.messaging.Properties;
+
 /**
  * Abstract handler for handling QPID client threads.
  * @author Mike Darretta
@@ -13,10 +15,15 @@ public abstract class ClientHandler extends CommandHandler {
     protected int numMessagesPerThread;
     
     /** The default number of client threads */
-    public static final int DEFAULT_NUM_THREADS = 1;
+    public static final int DEFAULT_NUM_THREADS = 
+    	(Integer) Properties.getProperties().getProperty(
+    		Properties.DEFAULT_NUM_THREADS_PER_CLIENT_STR);
+    	
     
     /** The default number of messages per thread */
-    public static final int DEFAULT_NUM_MESSAGES_PER_THREAD = 10000;
+    public static final int DEFAULT_NUM_MESSAGES_PER_THREAD =
+    	(Integer) Properties.getProperties().getProperty(
+    		Properties.DEFAULT_NUM_MSGS_PER_CLIENT_STR);
     
     /**
      * Default constructor assumes default number of clients and

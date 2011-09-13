@@ -3,6 +3,8 @@ package com.jboss.demo.mrg.messaging.handler;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import com.jboss.demo.mrg.messaging.Properties;
+
 /**
  * Handler for the qpid-queue-stats command.
  * @author Mike Darretta
@@ -16,7 +18,7 @@ public class QpidQueueStatsHandler extends CommandHandler {
 	protected int port;
 	
 	/**
-	 * Default constructors assumes localhost's IP address and the 
+	 * Default constructors assumes default hostname's IP address and the 
 	 * <code>BrokerHandler.DEFAULT_PORT</code> for the port.
 	 * @throws UnknownHostException If the host IP address cannot be resolved.
 	 */
@@ -33,7 +35,7 @@ public class QpidQueueStatsHandler extends CommandHandler {
 	}
 	
 	/**
-	 * Constructor for a port. This assumes the local host's IP address.
+	 * Constructor for a port. This assumes the default hostname's IP address.
 	 * @param port The port.
 	 * @throws UnknownHostException If the IP address cannot be resolved.
 	 */
@@ -57,6 +59,7 @@ public class QpidQueueStatsHandler extends CommandHandler {
 	 */
 	@Override
 	protected String getCommand() {
-		return "qpid-queue-stats -a " + ipAddress + ":" + port;
+		return Properties.getProperties().getProperty(
+				Properties.QPID_QUEUE_STATS_CMD_STR) + " -a " + ipAddress + ":" + port;
 	}
 }

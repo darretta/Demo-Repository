@@ -1,5 +1,7 @@
 package com.jboss.demo.mrg.messaging.handler;
 
+import com.jboss.demo.mrg.messaging.Properties;
+
 /**
  * Handler for handling QPID non-clustered brokers.
  * @author Mike Darretta
@@ -10,7 +12,9 @@ public class BrokerHandler extends CommandHandler {
 	protected int port;
 	
 	/** The default broker port */
-	public static final int DEFAULT_PORT = 5672;
+	public static final int DEFAULT_PORT = 
+		(Integer) Properties.getProperties().getProperty(
+			Properties.DEFAULT_BROKER_PORT_STR);
 	
 	/**
 	 * Default constructor uses the default broker port.
@@ -41,6 +45,7 @@ public class BrokerHandler extends CommandHandler {
 	 */
 	@Override
 	protected String getCommand() {
-		return "qpidd --port=" + port;
+		return Properties.getProperties().getProperty(
+				Properties.QPID_CMD_STR) + " --port=" + port;
 	}
 }
