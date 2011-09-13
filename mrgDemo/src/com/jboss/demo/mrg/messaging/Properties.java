@@ -25,22 +25,22 @@ public class Properties {
 	private static final String DEFAULT_HOSTNAME = "localhost";
 	
 	/** Show CPP client button key */
-	public static final String DEFAULT_SHOW_CPP_CLIENT_BTN_STR = PROP_NAME_PREFIX + "ShowCPPClientBtn";
+	public static final String SHOW_CPP_CLIENT_BTN_STR = PROP_NAME_PREFIX + "ShowCPPClientBtn";
 	
 	/** Default show CPP client button */
-	private static final boolean DEFAULT_SHOW_CPP_CLIENT_BTN = true;
+	private static final boolean SHOW_CPP_CLIENT_BTN = true;
 	
 	/** Show JMS client button key */
-	public static final String DEFAULT_SHOW_JMS_CLIENT_BTN_STR = PROP_NAME_PREFIX + "ShowJMSClientBtn";
+	public static final String SHOW_JMS_CLIENT_BTN_STR = PROP_NAME_PREFIX + "ShowJMSClientBtn";
 	
 	/** Default show JMS client button */
-	private static final boolean DEFAULT_SHOW_JMS_CLIENT_BTN = true;
+	private static final boolean SHOW_JMS_CLIENT_BTN = true;
 	
 	/** Show Python client button key*/
-	public static final String DEFAULT_SHOW_PYTHON_CLIENT_BTN_STR = PROP_NAME_PREFIX + "ShowPythonClientBtn";
+	public static final String SHOW_PYTHON_CLIENT_BTN_STR = PROP_NAME_PREFIX + "ShowPythonClientBtn";
 		
 	/** Default show Python client button */
-	private static final boolean DEFAULT_SHOW_PYTHON_CLIENT_BTN = true;
+	private static final boolean SHOW_PYTHON_CLIENT_BTN = true;
 	
 	/** Number of brokers key */
 	public static final String DEFAULT_NUM_BROKERS_STR = PROP_NAME_PREFIX + "DefaultNumBrokers";
@@ -121,9 +121,9 @@ public class Properties {
 
 		properties.put(DEMO_NAME_STR, DEMO_NAME);
 		properties.put(DEFAULT_HOSTNAME_STR, DEFAULT_HOSTNAME);
-		properties.put(DEFAULT_SHOW_CPP_CLIENT_BTN_STR, DEFAULT_SHOW_CPP_CLIENT_BTN);
-		properties.put(DEFAULT_SHOW_JMS_CLIENT_BTN_STR, DEFAULT_SHOW_JMS_CLIENT_BTN);
-		properties.put(DEFAULT_SHOW_PYTHON_CLIENT_BTN_STR, DEFAULT_SHOW_PYTHON_CLIENT_BTN);
+		properties.put(SHOW_CPP_CLIENT_BTN_STR, SHOW_CPP_CLIENT_BTN);
+		properties.put(SHOW_JMS_CLIENT_BTN_STR, SHOW_JMS_CLIENT_BTN);
+		properties.put(SHOW_PYTHON_CLIENT_BTN_STR, SHOW_PYTHON_CLIENT_BTN);
 		properties.put(DEFAULT_NUM_BROKERS_STR, DEFAULT_NUM_BROKERS);
 		properties.put(DEFAULT_NUM_THREADS_PER_CLIENT_STR, DEFAULT_NUM_THREADS_PER_CLIENT);
 		properties.put(DEFAULT_NUM_MSGS_PER_CLIENT_STR, DEFAULT_NUM_MSGS_PER_CLIENT);

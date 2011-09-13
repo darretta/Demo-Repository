@@ -168,7 +168,7 @@ public class MainFrame extends JFrame {
 					for (int x = 0; x < numBrokers; x++) {
 						CommandHandler handler = new ClusteredBrokerHandler(currentPort);
 						handlers.add(handler);
-						handler.start();
+						handler.execute();
 
 						LineGraph lineGraph = new LineGraph(handler);
 						
@@ -190,9 +190,6 @@ public class MainFrame extends JFrame {
 								lineGraph, ipAddress + ":" + (currentPort++));
 						new Thread(lgf).start();
 						parent = lgf;
-
-						// Give the brokers 1 second each to start up...
-						pause(1000);
 					}
 
 					if (cppClient.isEnabled()) {
@@ -202,7 +199,7 @@ public class MainFrame extends JFrame {
 									Integer.valueOf(messages.getText())
 											.intValue());
 							handlers.add(handler);
-							handler.start();
+							handler.execute();
 						}
 					}
 					/*
@@ -258,7 +255,7 @@ public class MainFrame extends JFrame {
 
 		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler(ipAddress, port);
 		handlers.add(qpidQueueStatsHandler);
-		qpidQueueStatsHandler.start();
+		qpidQueueStatsHandler.execute();
 		
 		// Wait 100 milliseconds to give the qpid-queue-stats thread a chance to initialize.
 		pause(100);

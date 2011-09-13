@@ -114,6 +114,16 @@ public class ClientUIComponent extends JComponent {
     }
     
     /**
+     * Sets the enabled of this component.
+     * @param isEnabled True if the component is enabled.
+     */
+    public void setEnabled(boolean isEnabled) {
+    	this.clientTypeCheckBox.setEnabled(isEnabled);
+    	this.numThreadsTextField.setEnabled(isEnabled);
+    	this.numThreadsLabel.setEnabled(isEnabled);
+    }
+    
+    /**
      * Returns the number of active client threads.
      * @return The number of active client threads.
      */
