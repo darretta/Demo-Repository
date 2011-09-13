@@ -8,6 +8,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import com.jboss.demo.mrg.messaging.Properties;
+
 /**
  * Client UI selection component.
  * @author Mike Darretta
@@ -80,7 +82,8 @@ public class ClientUIComponent extends JComponent {
     private void init() {
         this.setLayout(new GridLayout());
 
-        numThreadsTextField.setText("1");
+        numThreadsTextField.setText(Properties.getProperties().getStringProperty(
+        		Properties.DEFAULT_NUM_THREADS_PER_CLIENT_STR));
 
         this.add(clientTypeCheckBox);
         this.add(numThreadsTextField);

@@ -101,7 +101,9 @@ public class MainFrame extends JFrame {
         putComponent(threads, contentPane, 10, pythonClient, 25, layout);
 
         final LabelTextFieldComponent messages = new LabelTextFieldComponent(
-              "Number of messages per client thread: ", "10000", 10);
+              "Number of messages per client thread: ", 
+              Properties.getProperties().getStringProperty(Properties.DEFAULT_NUM_MSGS_PER_CLIENT_STR),
+              10);
         contentPane.add(messages);
         putComponent(messages, contentPane, 10, threads, 25, layout);
 
@@ -199,6 +201,7 @@ public class MainFrame extends JFrame {
 									Integer.valueOf(messages.getText())
 											.intValue());
 							handlers.add(handler);
+							handler.setRetryLimitInMillis(5000);
 							handler.execute();
 						}
 					}
