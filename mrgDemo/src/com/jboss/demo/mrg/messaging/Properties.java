@@ -105,6 +105,7 @@ public class Properties {
 		try {
 			Reader reader = new FileReader("mrg-demo.properties");
 			properties.load(reader);
+			System.out.println("Loaded " + properties.size() + " properties.");
 		} catch (Exception e) {
 			System.out.println(
 					"Could not read properties file....Using default property settings instead.");
