@@ -84,6 +84,13 @@ public class Properties {
 	/** Default QPID command */
 	private static final String QPID_CMD = "qpidd";
 	
+	/** QPID performance test retry limit in milliseconds key */
+	public static final String QPID_PERF_TEST_CMD_RETRY_TIME_LIMIT_IN_MILLIS_STR =
+		PROP_NAME_PREFIX + "QpidPerfTestCmdRetryTimeLimitInMillis";
+	
+	/** Default QPID performance test retry limit in milliseconds */
+	private static final int QPID_PERF_TEST_CMD_RETRY_TIME_LIMIT_IN_MILLIS = 5000;
+	
 	/** The underlying properties */
 	private static java.util.Properties properties = new java.util.Properties();
 	
@@ -131,6 +138,8 @@ public class Properties {
 		properties.put(QPID_PERF_TEST_CMD_STR, QPID_PERF_TEST_CMD);
 		properties.put(QPID_QUEUE_STATS_CMD_STR, QPID_QUEUE_STATS_CMD);
 		properties.put(QPID_CMD_STR, QPID_CMD);
+		properties.put(QPID_PERF_TEST_CMD_RETRY_TIME_LIMIT_IN_MILLIS_STR, 
+				QPID_PERF_TEST_CMD_RETRY_TIME_LIMIT_IN_MILLIS);
 	}
 	
 	/**

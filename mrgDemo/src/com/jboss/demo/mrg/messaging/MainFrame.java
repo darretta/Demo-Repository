@@ -201,7 +201,8 @@ public class MainFrame extends JFrame {
 									Integer.valueOf(messages.getText())
 											.intValue());
 							handlers.add(handler);
-							handler.setRetryLimitInMillis(5000);
+							handler.setRetryLimitInMillis(Properties.getProperties().getIntegerProperty(
+									Properties.QPID_PERF_TEST_CMD_RETRY_TIME_LIMIT_IN_MILLIS_STR));
 							handler.execute();
 						}
 					}
@@ -259,9 +260,6 @@ public class MainFrame extends JFrame {
 		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler(ipAddress, port);
 		handlers.add(qpidQueueStatsHandler);
 		qpidQueueStatsHandler.execute();
-		
-		// Wait 100 milliseconds to give the qpid-queue-stats thread a chance to initialize.
-		pause(100);
 
 		QpidQueueStatsOutputDataSource source = new QpidQueueStatsOutputDataSource(
 				qpidQueueStatsHandler.getProcess().getInputStream(), columnNumber);
@@ -290,17 +288,5 @@ public class MainFrame extends JFrame {
         layout.putConstraint(SpringLayout.NORTH, component,
                 northRelativeLocation,
                 SpringLayout.NORTH, northRelativeComponent);
-    }
-    
-    /**
-     * Utility method to pause thread execution for managing multiple threads.
-     * @param milliseconds The number of milliseconds to pause.
-     */
-    private void pause(int milliseconds) {
-    	try {
-    		Thread.sleep(milliseconds);
-    	} catch (InterruptedException ie) {
-    		ie.printStackTrace();
-    	}
     }
 }
