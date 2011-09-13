@@ -51,7 +51,7 @@ public class MainFrame extends JFrame {
     private Collection<CommandHandler> handlers;
     
     /** The current broker port number, initialized to the default broker port */
-    private int currentPort = (Integer) Properties.getProperties().getProperty(
+    private int currentPort = Properties.getProperties().getIntegerProperty(
     		Properties.DEFAULT_BROKER_PORT_STR);
 
     /**
@@ -172,7 +172,7 @@ public class MainFrame extends JFrame {
 
 						LineGraph lineGraph = new LineGraph(handler);
 						
-						String hostname = (String) Properties.getProperties().getProperty(
+						String hostname = Properties.getProperties().getStringProperty(
 								Properties.DEFAULT_HOSTNAME_STR);
 						String ipAddress = InetAddress.getByName(hostname).getHostAddress();
 

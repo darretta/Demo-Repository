@@ -149,4 +149,49 @@ public class Properties {
 	public Object getProperty(String propertyName) {
 		return properties.get(propertyName);
 	}
+	
+	/**
+	 * Returns the property value for the particular key as a string.
+	 * @param propertyName The property key.
+	 * @return The property value.
+	 */
+	public String getStringProperty(String propertyName) {
+		return getProperty(propertyName).toString();
+	}
+	
+	/**
+	 * Returns the property value for the particular key as a boolean.
+	 * @param propertyName The property key.
+	 * @return The property value.
+	 */
+	public Boolean getBooleanProperty(String propertyName) {
+		return Boolean.valueOf(getStringProperty(propertyName));
+	}
+	
+	/**
+	 * Returns the property value for the particular key as an integer.
+	 * @param propertyName The property key.
+	 * @return The property value.
+	 */
+	public Integer getIntegerProperty(String propertyName) {
+		return Integer.valueOf(getStringProperty(propertyName));
+	}
+	
+	/**
+	 * Returns the property value for the particular key as a double.
+	 * @param propertyName The property key.
+	 * @return The property value.
+	 */
+	public Double getDoubleProperty(String propertyName) {
+		return Double.valueOf(getStringProperty(propertyName));
+	}
+	
+	/**
+	 * Returns the property value for the particular key as a float.
+	 * @param propertyName The property key.
+	 * @return The property value.
+	 */
+	public Float getFloatProperty(String propertyName) {
+		return Float.valueOf(getStringProperty(propertyName));
+	}
 }

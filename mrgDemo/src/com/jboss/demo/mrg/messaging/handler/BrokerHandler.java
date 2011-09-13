@@ -13,7 +13,7 @@ public class BrokerHandler extends CommandHandler {
 	
 	/** The default broker port */
 	public static final int DEFAULT_PORT = 
-		(Integer) Properties.getProperties().getProperty(
+		(Integer) Properties.getProperties().getIntegerProperty(
 			Properties.DEFAULT_BROKER_PORT_STR);
 	
 	/**

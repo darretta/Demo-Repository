@@ -13,7 +13,7 @@ public class QpidPerfTestHandler extends CommandHandler {
 	
 	/** The default number of messages to send */
 	public static final int DEFAULT_NUM_MESSAGES = 
-		(Integer) Properties.getProperties().getProperty(
+		(Integer) Properties.getProperties().getIntegerProperty(
 				Properties.DEFAULT_NUM_MSGS_PER_CLIENT_STR);
 
 	/**

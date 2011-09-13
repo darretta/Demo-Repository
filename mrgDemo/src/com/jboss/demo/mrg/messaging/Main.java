@@ -11,7 +11,7 @@ public class Main {
      */
     public static final void main(String[] argv) {
         MainFrame frame = new MainFrame(
-        	(String) Properties.getProperties().getProperty(
+        	Properties.getProperties().getStringProperty(
         		Properties.DEMO_NAME_STR));
         frame.setVisible(true);
     }

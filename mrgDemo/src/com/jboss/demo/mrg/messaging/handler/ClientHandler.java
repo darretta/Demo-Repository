@@ -16,13 +16,13 @@ public abstract class ClientHandler extends CommandHandler {
     
     /** The default number of client threads */
     public static final int DEFAULT_NUM_THREADS = 
-    	(Integer) Properties.getProperties().getProperty(
+    	(Integer) Properties.getProperties().getIntegerProperty(
     		Properties.DEFAULT_NUM_THREADS_PER_CLIENT_STR);
     	
     
     /** The default number of messages per thread */
     public static final int DEFAULT_NUM_MESSAGES_PER_THREAD =
-    	(Integer) Properties.getProperties().getProperty(
+    	Properties.getProperties().getIntegerProperty(
     		Properties.DEFAULT_NUM_MSGS_PER_CLIENT_STR);
     
     /**
