@@ -24,23 +24,23 @@ public class Properties {
 	/** Default hostname */
 	private static final String DEFAULT_HOSTNAME = "localhost";
 	
-	/** Show CPP client button key */
-	public static final String SHOW_CPP_CLIENT_BTN_STR = PROP_NAME_PREFIX + "ShowCPPClientBtn";
+	/** Enable CPP client button key */
+	public static final String ENABLE_CPP_CLIENT_BTN_STR = PROP_NAME_PREFIX + "EnableCPPClientBtn";
 	
-	/** Default show CPP client button */
-	private static final boolean SHOW_CPP_CLIENT_BTN = true;
+	/** Default enable CPP client button */
+	private static final boolean ENABLE_CPP_CLIENT_BTN = true;
 	
-	/** Show JMS client button key */
-	public static final String SHOW_JMS_CLIENT_BTN_STR = PROP_NAME_PREFIX + "ShowJMSClientBtn";
+	/** Enable JMS client button key */
+	public static final String ENABLE_JMS_CLIENT_BTN_STR = PROP_NAME_PREFIX + "EnableJMSClientBtn";
 	
-	/** Default show JMS client button */
-	private static final boolean SHOW_JMS_CLIENT_BTN = true;
+	/** Default enable JMS client button */
+	private static final boolean ENABLE_JMS_CLIENT_BTN = true;
 	
-	/** Show Python client button key*/
-	public static final String SHOW_PYTHON_CLIENT_BTN_STR = PROP_NAME_PREFIX + "ShowPythonClientBtn";
+	/** Enable Python client button key*/
+	public static final String ENABLE_PYTHON_CLIENT_BTN_STR = PROP_NAME_PREFIX + "EnablePythonClientBtn";
 		
-	/** Default show Python client button */
-	private static final boolean SHOW_PYTHON_CLIENT_BTN = true;
+	/** Default enable Python client button */
+	private static final boolean ENABLE_PYTHON_CLIENT_BTN = true;
 	
 	/** Number of brokers key */
 	public static final String DEFAULT_NUM_BROKERS_STR = PROP_NAME_PREFIX + "DefaultNumBrokers";
@@ -128,9 +128,9 @@ public class Properties {
 
 		properties.put(DEMO_NAME_STR, DEMO_NAME);
 		properties.put(DEFAULT_HOSTNAME_STR, DEFAULT_HOSTNAME);
-		properties.put(SHOW_CPP_CLIENT_BTN_STR, SHOW_CPP_CLIENT_BTN);
-		properties.put(SHOW_JMS_CLIENT_BTN_STR, SHOW_JMS_CLIENT_BTN);
-		properties.put(SHOW_PYTHON_CLIENT_BTN_STR, SHOW_PYTHON_CLIENT_BTN);
+		properties.put(ENABLE_CPP_CLIENT_BTN_STR, ENABLE_CPP_CLIENT_BTN);
+		properties.put(ENABLE_JMS_CLIENT_BTN_STR, ENABLE_JMS_CLIENT_BTN);
+		properties.put(ENABLE_PYTHON_CLIENT_BTN_STR, ENABLE_PYTHON_CLIENT_BTN);
 		properties.put(DEFAULT_NUM_BROKERS_STR, DEFAULT_NUM_BROKERS);
 		properties.put(DEFAULT_NUM_THREADS_PER_CLIENT_STR, DEFAULT_NUM_THREADS_PER_CLIENT);
 		properties.put(DEFAULT_NUM_MSGS_PER_CLIENT_STR, DEFAULT_NUM_MSGS_PER_CLIENT);

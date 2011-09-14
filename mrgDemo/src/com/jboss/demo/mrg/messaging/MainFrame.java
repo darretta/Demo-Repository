@@ -89,14 +89,20 @@ public class MainFrame extends JFrame {
         final ClientUIComponent cppClient = new ClientUIComponent(ClientType.CPP, "C++");
         contentPane.add(cppClient);
         putComponent(cppClient, contentPane, 10, clientLabel, 25, layout);
+        cppClient.setEnabled(Properties.getProperties().getBooleanProperty(
+        		Properties.ENABLE_CPP_CLIENT_BTN_STR));
 
         final ClientUIComponent jmsClient = new ClientUIComponent(ClientType.JMS, "JMS");
         contentPane.add(jmsClient);
         putComponent(jmsClient, contentPane, 10, cppClient, 25, layout);
+        jmsClient.setEnabled(Properties.getProperties().getBooleanProperty(
+        		Properties.ENABLE_JMS_CLIENT_BTN_STR));
 
         final ClientUIComponent pythonClient = new ClientUIComponent(ClientType.PYTHON, "Python");
         contentPane.add(pythonClient);
         putComponent(pythonClient, contentPane, 10, jmsClient, 25, layout);
+        pythonClient.setEnabled(Properties.getProperties().getBooleanProperty(
+        		Properties.ENABLE_PYTHON_CLIENT_BTN_STR));
 
         final LabelTextFieldComponent threads = new LabelTextFieldComponent(
               "Number of brokers: ", "1", 10);
