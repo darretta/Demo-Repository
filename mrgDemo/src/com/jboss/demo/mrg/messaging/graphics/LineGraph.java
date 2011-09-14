@@ -28,7 +28,7 @@ public class LineGraph extends JPanel {
 	protected Collection<CommandHandler> handlers;
 
 	/** Padding from the panel edge for rendering chart */
-	protected final int PAD = 30;
+	protected final int PAD = 40;
     
 	/**
 	 * Default constructor. This version creates an empty set of graph points.
