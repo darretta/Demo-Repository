@@ -28,7 +28,6 @@ import com.jboss.demo.mrg.messaging.graphics.GraphPoints;
 import com.jboss.demo.mrg.messaging.graphics.LabelTextFieldComponent;
 import com.jboss.demo.mrg.messaging.graphics.LineGraph;
 import com.jboss.demo.mrg.messaging.graphics.ClientUIComponent.ClientType;
-import com.jboss.demo.mrg.messaging.handler.BrokerHandler;
 import com.jboss.demo.mrg.messaging.handler.ClusteredBrokerHandler;
 import com.jboss.demo.mrg.messaging.handler.CommandHandler;
 import com.jboss.demo.mrg.messaging.handler.JTextAreaLogHandler;
@@ -56,9 +55,6 @@ public class MainFrame extends JFrame {
      * to ensure all processes are killed at application exit.
      */
     private Collection<CommandHandler> handlers;
-    
-    /** The current broker port number */
-    private int currentPort;
 
     /**
      * Frame constructor.
@@ -204,12 +200,12 @@ public class MainFrame extends JFrame {
 						}
 						return;
 					}
-					resetBrokerPort();
+					
 					final int numBrokers = Integer.parseInt(numBrokersComp.getText());
 					Component parent = thisFrame;
 					
 					for (int x = 0; x < numBrokers; x++) {
-						CommandHandler handler = new ClusteredBrokerHandler(currentPort, logHandler);
+						ClusteredBrokerHandler handler = new ClusteredBrokerHandler(logHandler);
 						handlers.add(handler);
 						handler.execute();
 
@@ -222,18 +218,18 @@ public class MainFrame extends JFrame {
 
 						bindGraphToSource(lineGraph,
 								ipAddress,
-								currentPort,
+								handler.getPort(),
 								QpidQueueStatsOutputDataSource.ENQ_RATE_COLUMN,
 								"Enqueue Rate",
 								logHandler);
 						bindGraphToSource(lineGraph,
 								ipAddress,
-								currentPort,
+								handler.getPort(),
 								QpidQueueStatsOutputDataSource.DEQ_RATE_COLUMN,
 								"Dequeue Rate",
 								logHandler);
 						LineGraphFrame lgf = new LineGraphFrame(parent,
-								lineGraph, ipAddress + ":" + (currentPort++));
+								lineGraph, ipAddress + ":" + handler.getPort());
 						new Thread(lgf).start();
 						parent = lgf;
 					}
@@ -303,26 +299,5 @@ public class MainFrame extends JFrame {
         layout.putConstraint(SpringLayout.NORTH, component,
                 northRelativeLocation,
                 SpringLayout.NORTH, northRelativeComponent);
-    }
-    
-    /**
-     * Attempts to reset the current broker port. If there are currently no brokers running, then
-     * the port is reset to the default broker port. Otherwise, the current broker port is
-     * left unaltered.
-     */
-    private void resetBrokerPort() {
-    	Iterator<CommandHandler> i = handlers.iterator();
-    	boolean doReset = true;
-    	while (i.hasNext()) {
-    		if (i.next() instanceof BrokerHandler) {
-    			doReset = false;
-    			break;
-    		}
-    	}
-    	
-    	if (doReset) {
-    	    currentPort = Properties.getProperties().getIntegerProperty(
-        		Properties.DEFAULT_BROKER_PORT_STR);
-    	}
     }
 }

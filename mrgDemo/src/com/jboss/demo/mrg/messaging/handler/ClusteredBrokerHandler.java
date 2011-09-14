@@ -6,6 +6,10 @@ import java.util.Iterator;
 
 /**
  * Handler for a clustered QPID broker.
+ * <br>
+ * Since port management for the entire cluster has been assigned to this class,
+ * the class constructors do not include the <code>port</code> attribute as
+ * defined by the superclass. This attribute is resolved for every new instantiation.
  * @author Mike Darretta
  */
 public class ClusteredBrokerHandler extends BrokerHandler {
@@ -33,44 +37,24 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 	}
 	
 	/**
-	 * Constructor for a port. This is identical to <code>this(DEFAULT_CLUSTER_NAME, port)</code>.
-	 * @param port The broker port.
-	 * @param logHandler The log handler.
-	 */
-	public ClusteredBrokerHandler(int port, LogHandler logHandler) {
-		this(DEFAULT_CLUSTER_NAME, port, logHandler);
-	}
-	
-	/**
-	 * Constructor for a cluster name.. This is identical to <code>this(clusterName, DEFAULT_PORT)</code>.
+	 * Constructor for a cluster name and port. This implementation uses an auto-generated 
+	 * data directory name.
 	 * @param clusterName The cluster name.
 	 * @param logHandler The log handler.
 	 */
 	public ClusteredBrokerHandler(String clusterName, LogHandler logHandler) {
-		this(clusterName, DEFAULT_PORT, logHandler);
-	}
-	
-	/**
-	 * Constructor for a cluster name and port. This implementation uses an auto-generated 
-	 * data directory name.
-	 * @param clusterName The cluster name.
-	 * @param port The broker port.
-	 * @param logHandler The log handler.
-	 */
-	public ClusteredBrokerHandler(String clusterName, int port, LogHandler logHandler) {
-		this(clusterName, port, null, logHandler);
+		this(clusterName, null, logHandler);
 		this.dataDir = DEFAULT_DATA_DIR_PREFIX + port + "-" + this.hashCode();
 	}
 	
 	/**
 	 * Constructor for non-default attribute values.
 	 * @param clusterName The cluster name.
-	 * @param port The broker port.
 	 * @param dataDir The data directory.
 	 * @param logHandler The log handler.
 	 */
-	public ClusteredBrokerHandler(String clusterName, int port, String dataDir, LogHandler logHandler) {
-		super(port, logHandler);
+	public ClusteredBrokerHandler(String clusterName, String dataDir, LogHandler logHandler) {
+		super(DEFAULT_PORT, logHandler);
 		this.clusterName = clusterName;
 		this.dataDir = dataDir;
 		this.port = resolveNextAvailablePort();
@@ -148,6 +132,7 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 			new DataDirRemoverHandler(getLogHandler());
 		ddhHandler.setRetryLimitInMillis(2000);
 		ddhHandler.execute();
+		portsInUse.remove(port);
 	}
 	
 	/**
