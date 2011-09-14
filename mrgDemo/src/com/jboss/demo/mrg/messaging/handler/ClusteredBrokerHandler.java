@@ -93,4 +93,41 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 	protected String getCommand() {
 		return super.getCommand() + " --cluster-name=" + clusterName + " --data-dir=" + dataDir;
 	}
+	
+	/**
+	 * Destroys the process. This overriding method attempts to remove
+	 * the temporary data directory as well.
+	 */
+	@Override
+	public void destroyProcess() {
+		super.destroyProcess();
+		DataDirRemoverHandler ddhHandler = 
+			new DataDirRemoverHandler(getLogHandler());
+		ddhHandler.setRetryLimitInMillis(2000);
+		ddhHandler.execute();
+	}
+	
+	/**
+	 * Inner class command handler to remove the data directory.
+	 * @author Mike Darretta
+	 */
+	protected class DataDirRemoverHandler extends CommandHandler {
+		
+		/**
+		 * Constructor.
+		 * @param handler The log handler.
+		 */
+		protected DataDirRemoverHandler(LogHandler handler) {
+			super(handler);
+		}
+		
+		/**
+		 * Returns the command to execute.
+		 * @return The command to execute.
+		 */
+		@Override
+		protected String getCommand() {
+			return "rm -rf " + dataDir;
+		}
+	}
 }
