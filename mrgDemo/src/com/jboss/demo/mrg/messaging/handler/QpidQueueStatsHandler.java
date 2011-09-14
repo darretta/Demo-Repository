@@ -20,35 +20,40 @@ public class QpidQueueStatsHandler extends CommandHandler {
 	/**
 	 * Default constructors assumes default hostname's IP address and the 
 	 * <code>BrokerHandler.DEFAULT_PORT</code> for the port.
+	 * @param logHandler The log handler.
 	 * @throws UnknownHostException If the host IP address cannot be resolved.
 	 */
-	public QpidQueueStatsHandler() throws UnknownHostException {
-		this(InetAddress.getLocalHost().getHostAddress(), BrokerHandler.DEFAULT_PORT);
+	public QpidQueueStatsHandler(LogHandler logHandler) throws UnknownHostException {
+		this(InetAddress.getLocalHost().getHostAddress(), BrokerHandler.DEFAULT_PORT, logHandler);
 	}
 	
 	/**
 	 * Constructor for an IP address. This assumes a port of <code>BrokerHandler.DEFAULT_PORT</code>.
 	 * @param ipAddress The IP address.
+	 * @param logHandler The log handler.
 	 */
-	public QpidQueueStatsHandler(String ipAddress) {
-		this(ipAddress, BrokerHandler.DEFAULT_PORT);
+	public QpidQueueStatsHandler(String ipAddress, LogHandler logHandler) {
+		this(ipAddress, BrokerHandler.DEFAULT_PORT, logHandler);
 	}
 	
 	/**
 	 * Constructor for a port. This assumes the default hostname's IP address.
 	 * @param port The port.
+	 * @param logHandler The log handler.
 	 * @throws UnknownHostException If the IP address cannot be resolved.
 	 */
-	public QpidQueueStatsHandler(int port) throws UnknownHostException {
-		this(InetAddress.getLocalHost().getHostAddress(), port);
+	public QpidQueueStatsHandler(int port, LogHandler logHandler) throws UnknownHostException {
+		this(InetAddress.getLocalHost().getHostAddress(), port, logHandler);
 	}
 	
 	/**
 	 * Constructor for an IP address and port.
 	 * @param ipAddress The IP address.
 	 * @param port The port.
+	 * @param logHandler The log handler.
 	 */
-	public QpidQueueStatsHandler(String ipAddress, int port) {
+	public QpidQueueStatsHandler(String ipAddress, int port, LogHandler logHandler) {
+		super(logHandler);
 		this.ipAddress = ipAddress;
 		this.port = port;
 	}

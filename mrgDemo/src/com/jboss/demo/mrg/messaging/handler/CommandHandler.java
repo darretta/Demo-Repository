@@ -16,11 +16,17 @@ public abstract class CommandHandler extends Thread {
 	 * This value defaults to 0 (no retries allowed).
 	 */
 	protected int retryLimitInMillis = 0;
+	
+	/** The log handler */
+	protected LogHandler logHandler;
 
 	/**
-	 * Default constructor.
+	 * Constructor.
+	 * @param logHandler The log handler.
 	 */
-	public CommandHandler() {}
+	public CommandHandler(LogHandler logHandler) {
+		this.logHandler = logHandler;
+	}
 	
 	/**
 	 * Returns the process.
@@ -28,6 +34,14 @@ public abstract class CommandHandler extends Thread {
 	 */
 	public Process getProcess() {
 		return process;
+	}
+	
+	/**
+	 * Returns the log handler.
+	 * @return The log handler.
+	 */
+	public LogHandler getLogHandler() {
+		return logHandler;
 	}
 	
 	/**
@@ -46,20 +60,20 @@ public abstract class CommandHandler extends Thread {
                 	
                 	// No exception means process exited! Attempt a retry...
                 	if (System.currentTimeMillis() < endTime) {
-                        System.out.println("[" + getCommand() + "] exited with value of " + exitValue + "...retrying....");
+                		logHandler.logWithNewline("[" + getCommand() + "] exited with value of " + exitValue + "...retrying....");
                 	} else {
-                		System.out.println("[" + getCommand() + "] did not start within the allotted time...exiting....");
+                		logHandler.logWithNewline("[" + getCommand() + "] did not start within the allotted time...exiting....");
                 		done = true;
                 	}
                 } catch (IllegalThreadStateException itse) {
                 	// This exception is only thrown when the process has NOT exited...i.e., it is running.
-                	System.out.println("[" + getCommand() + "] started successfully!");
+                	logHandler.logWithNewline("[" + getCommand() + "] started successfully!");
                 	done = true;
                     handleProcess();
                 }
 			}
         } catch (Throwable t) {
-            t.printStackTrace();
+            logHandler.log(t);
         }
 	}
 	
@@ -89,6 +103,11 @@ public abstract class CommandHandler extends Thread {
 	 * Destroys the process.
 	 */
 	public void destroyProcess() {
+		try {
+		    logHandler.logWithNewline("Stopping [" + getCommand() + "].");
+		} catch (LoggingException le) {
+			le.printStackTrace();
+		}
 		process.destroy();
 	}
 	

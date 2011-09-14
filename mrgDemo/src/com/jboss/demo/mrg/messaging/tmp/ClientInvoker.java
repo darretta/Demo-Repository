@@ -2,6 +2,8 @@ package com.jboss.demo.mrg.messaging.tmp;
 
 import java.io.InputStream;
 
+import com.jboss.demo.mrg.messaging.handler.LogHandler;
+
 
 /**
  * Invoker for client scripts.

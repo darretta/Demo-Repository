@@ -17,17 +17,20 @@ public class BrokerHandler extends CommandHandler {
 			Properties.DEFAULT_BROKER_PORT_STR);
 	
 	/**
-	 * Default constructor uses the default broker port.
+	 * Constructor uses the default broker port.
+	 * @param logHandler The log handler.
 	 */
-	public BrokerHandler() {
-		this(DEFAULT_PORT);
+	public BrokerHandler(LogHandler logHandler) {
+		this(DEFAULT_PORT, logHandler);
 	}
 	
 	/**
 	 * Constructor.
 	 * @param port The broker port.
+	 * @param logHandler The log handler.
 	 */
-	public BrokerHandler(int port) {
+	public BrokerHandler(int port, LogHandler logHandler) {
+		super(logHandler);
 		this.port = port;
 	}
 	

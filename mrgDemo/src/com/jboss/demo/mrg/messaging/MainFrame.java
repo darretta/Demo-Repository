@@ -30,6 +30,8 @@ import com.jboss.demo.mrg.messaging.graphics.LineGraph;
 import com.jboss.demo.mrg.messaging.graphics.ClientUIComponent.ClientType;
 import com.jboss.demo.mrg.messaging.handler.ClusteredBrokerHandler;
 import com.jboss.demo.mrg.messaging.handler.CommandHandler;
+import com.jboss.demo.mrg.messaging.handler.JTextAreaLogHandler;
+import com.jboss.demo.mrg.messaging.handler.LogHandler;
 import com.jboss.demo.mrg.messaging.handler.QpidPerfTestHandler;
 import com.jboss.demo.mrg.messaging.handler.QpidQueueStatsHandler;
 
@@ -160,6 +162,8 @@ public class MainFrame extends JFrame {
                 }
             }
         });
+        
+        final LogHandler logHandler = new JTextAreaLogHandler(logTextArea);
 
 		executeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -177,7 +181,7 @@ public class MainFrame extends JFrame {
 					Component parent = thisFrame;
 					
 					for (int x = 0; x < numBrokers; x++) {
-						CommandHandler handler = new ClusteredBrokerHandler(currentPort);
+						CommandHandler handler = new ClusteredBrokerHandler(currentPort, logHandler);
 						handlers.add(handler);
 						handler.execute();
 
@@ -192,12 +196,14 @@ public class MainFrame extends JFrame {
 								ipAddress,
 								currentPort,
 								QpidQueueStatsOutputDataSource.ENQ_RATE_COLUMN,
-								"Enqueue Rate");
+								"Enqueue Rate",
+								logHandler);
 						bindGraphToSource(lineGraph,
 								ipAddress,
 								currentPort,
 								QpidQueueStatsOutputDataSource.DEQ_RATE_COLUMN,
-								"Dequeue Rate");
+								"Dequeue Rate",
+								logHandler);
 						LineGraphFrame lgf = new LineGraphFrame(parent,
 								lineGraph, ipAddress + ":" + (currentPort++));
 						new Thread(lgf).start();
@@ -209,7 +215,7 @@ public class MainFrame extends JFrame {
 								.getNumActiveClientThreads(); x++) {
 							CommandHandler handler = new QpidPerfTestHandler(
 									Integer.valueOf(messages.getText())
-											.intValue());
+											.intValue(), logHandler);
 							handlers.add(handler);
 							handler.setRetryLimitInMillis(Properties.getProperties().getIntegerProperty(
 									Properties.QPID_PERF_TEST_CMD_RETRY_TIME_LIMIT_IN_MILLIS_STR));
@@ -263,17 +269,18 @@ public class MainFrame extends JFrame {
      * @param port The port number for the data source.
      * @param columnNumber The column number of the qpid-queue-stats output.
      * @param graphName The name of the graph for presentation.
+     * @param logHandler The log handler to manage output.
      */
     private void bindGraphToSource(LineGraph lineGraph, String ipAddress, int port, 
-    		int columnNumber, String graphName) {
+    		int columnNumber, String graphName, LogHandler logHandler) {
 
-		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler(ipAddress, port);
+		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler(ipAddress, port, logHandler);
 		lineGraph.addHandler(qpidQueueStatsHandler);
 		handlers.add(qpidQueueStatsHandler);
 		qpidQueueStatsHandler.execute();
 
 		QpidQueueStatsOutputDataSource source = new QpidQueueStatsOutputDataSource(
-				qpidQueueStatsHandler.getProcess().getInputStream(), columnNumber);
+				qpidQueueStatsHandler.getProcess().getInputStream(), columnNumber, logHandler);
 
 		GraphPoints points = new GraphPoints(20, graphName);
 		lineGraph.addPoints(points);

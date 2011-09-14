@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.StringTokenizer;
 
 import com.jboss.demo.mrg.messaging.data.DataSourceConsumer;
+import com.jboss.demo.mrg.messaging.handler.LogHandler;
 
 /**
  * Data source for the qpid-queue-stats command.
@@ -33,8 +34,8 @@ public class QpidQueueStatsOutputDataSource extends OutputDataSource {
 	 * Constructor.
 	 * @param inputStream The input stream.
 	 */
-	public QpidQueueStatsOutputDataSource(InputStream inputStream, int columnToProcess) {
-		super(inputStream);
+	public QpidQueueStatsOutputDataSource(InputStream inputStream, int columnToProcess, LogHandler logHandler) {
+		super(inputStream, logHandler);
 		this.columnToProcess = columnToProcess;
 	}
 	

@@ -19,26 +19,29 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 	public static final String DEFAULT_DATA_DIR_PREFIX="/tmp/qpid-data-dir-";
 	
 	/**
-	 * Default constructor. This is identical to <code>this(DEFAULT_CLUSTER_NAME)</code>.
+	 * Constructor. This is identical to <code>this(DEFAULT_CLUSTER_NAME)</code>.
+	 * @param logHandler The log handler.
 	 */
-	public ClusteredBrokerHandler() {
-		this(DEFAULT_CLUSTER_NAME);
+	public ClusteredBrokerHandler(LogHandler logHandler) {
+		this(DEFAULT_CLUSTER_NAME, logHandler);
 	}
 	
 	/**
 	 * Constructor for a port. This is identical to <code>this(DEFAULT_CLUSTER_NAME, port)</code>.
 	 * @param port The broker port.
+	 * @param logHandler The log handler.
 	 */
-	public ClusteredBrokerHandler(int port) {
-		this(DEFAULT_CLUSTER_NAME, port);
+	public ClusteredBrokerHandler(int port, LogHandler logHandler) {
+		this(DEFAULT_CLUSTER_NAME, port, logHandler);
 	}
 	
 	/**
 	 * Constructor for a cluster name.. This is identical to <code>this(clusterName, DEFAULT_PORT)</code>.
 	 * @param clusterName The cluster name.
+	 * @param logHandler The log handler.
 	 */
-	public ClusteredBrokerHandler(String clusterName) {
-		this(clusterName, DEFAULT_PORT);
+	public ClusteredBrokerHandler(String clusterName, LogHandler logHandler) {
+		this(clusterName, DEFAULT_PORT, logHandler);
 	}
 	
 	/**
@@ -46,9 +49,10 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 	 * data directory name.
 	 * @param clusterName The cluster name.
 	 * @param port The broker port.
+	 * @param logHandler The log handler.
 	 */
-	public ClusteredBrokerHandler(String clusterName, int port) {
-		this(clusterName, port, null);
+	public ClusteredBrokerHandler(String clusterName, int port, LogHandler logHandler) {
+		this(clusterName, port, null, logHandler);
 		this.dataDir = DEFAULT_DATA_DIR_PREFIX + port + "-" + this.hashCode();
 	}
 	
@@ -57,9 +61,10 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 	 * @param clusterName The cluster name.
 	 * @param port The broker port.
 	 * @param dataDir The data directory.
+	 * @param logHandler The log handler.
 	 */
-	public ClusteredBrokerHandler(String clusterName, int port, String dataDir) {
-		super(port);
+	public ClusteredBrokerHandler(String clusterName, int port, String dataDir, LogHandler logHandler) {
+		super(port, logHandler);
 		this.clusterName = clusterName;
 		this.dataDir = dataDir;
 	}

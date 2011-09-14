@@ -17,17 +17,20 @@ public class QpidPerfTestHandler extends CommandHandler {
 				Properties.DEFAULT_NUM_MSGS_PER_CLIENT_STR);
 
 	/**
-	 * Default constructor for the default number of messages.
+	 * Constructor for the default number of messages.
+	 * @param logHandler The log handler.
 	 */
-	public QpidPerfTestHandler() {
-		this(DEFAULT_NUM_MESSAGES);
+	public QpidPerfTestHandler(LogHandler logHandler) {
+		this(DEFAULT_NUM_MESSAGES, logHandler);
 	}
 	
 	/**
 	 * Constructor for a specific number of messages to send.
 	 * @param numMessages The number of messages to send.
+	 * @param logHandler The log handler.
 	 */
-	public QpidPerfTestHandler(int numMessages) {
+	public QpidPerfTestHandler(int numMessages, LogHandler logHandler) {
+		super(logHandler);
 		this.numMessages = numMessages;
 	}
 	
