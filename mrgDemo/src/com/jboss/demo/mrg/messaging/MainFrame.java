@@ -47,7 +47,10 @@ public class MainFrame extends JFrame {
 	/** Handle to this object for use in anonymous methods */
     private Component thisFrame = this;
     
-    /** Collection of command handlers to close at exit */
+    /** 
+     * Collection of command handlers to close at exit. This is a fail-safe means
+     * to ensure all processes are killed at application exit.
+     */
     private Collection<CommandHandler> handlers;
     
     /** The current broker port number, initialized to the default broker port */
@@ -172,7 +175,8 @@ public class MainFrame extends JFrame {
 						handlers.add(handler);
 						handler.execute();
 
-						LineGraph lineGraph = new LineGraph(handler);
+						LineGraph lineGraph = new LineGraph();
+						lineGraph.addHandler(handler);
 						
 						String hostname = Properties.getProperties().getStringProperty(
 								Properties.DEFAULT_HOSTNAME_STR);
@@ -258,6 +262,7 @@ public class MainFrame extends JFrame {
     		int columnNumber, String graphName) {
 
 		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler(ipAddress, port);
+		lineGraph.addHandler(qpidQueueStatsHandler);
 		handlers.add(qpidQueueStatsHandler);
 		qpidQueueStatsHandler.execute();
 

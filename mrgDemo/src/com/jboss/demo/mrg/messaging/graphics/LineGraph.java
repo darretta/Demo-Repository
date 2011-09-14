@@ -24,43 +24,24 @@ public class LineGraph extends JPanel {
 	/** The points for the line graph */
 	protected Collection<GraphPoints> points;
 	
-	/** The optional command handler that this graph is bound to */
-	protected CommandHandler handler;
+	/** The optional collections of command handlers that this graph is bound to */
+	protected Collection<CommandHandler> handlers;
 
 	/** Padding from the panel edge for rendering chart */
 	protected final int PAD = 40;
     
 	/**
-	 * Default constructor. This version creates an empty set of graph points
-	 * and a null command handler.
+	 * Default constructor. This version creates an empty set of graph points.
 	 */
     public LineGraph() {
-    	this(null, null);
-    }
-    
-    /**
-     * Constructor for a command handler. This version creates an empty points object.
-     * @param handler The command handler.
-     */
-    public LineGraph(CommandHandler handler) {
-    	this(null, handler);
+    	this(new ArrayList<GraphPoints> ());
     }
 
     /**
-     * Constructor for a set of graph points. This is identical to <code>this(graphPoints, null)</code>.
+     * Constructor for a set of graph points.
      * @param graphPoints The graph points.
-     */
+     */  	
     public LineGraph(GraphPoints graphPoints) {
-    	this(graphPoints, null);
-    }
-    
-    /**
-     * Constructor.
-     * @param graphPoints The set of graph points.
-     * @param handler The command handler.
-     */
-    public LineGraph(GraphPoints graphPoints, CommandHandler handler) {
-    	this.handler = handler;
     	Collection<GraphPoints> points = new ArrayList<GraphPoints> ();
     	if (graphPoints != null) {
     	    points.add(graphPoints);
@@ -101,14 +82,34 @@ public class LineGraph extends JPanel {
     }
     
     /**
-     * Returns the command handler.
-     * @return The command handler.
+     * Returns the optional command handlers.
+     * @return The optional command handlers.
      */
-    public CommandHandler getHandler() {
-    	return handler;
-    }
+    public Collection<CommandHandler> getHandlers() {
+		return handlers;
+	}
 
     /**
+     * Sets the optional command handlers.
+     * @param handlers The command handlers.
+     */
+	public void setHandlers(Collection<CommandHandler> handlers) {
+		this.handlers = handlers;
+	}
+	
+	/**
+	 * Adds a command handler to the handler list.
+	 * @param handler The command handler to add.
+	 */
+	public void addHandler(CommandHandler handler) {
+		if (handlers == null) {
+			handlers = new ArrayList<CommandHandler> ();
+		}
+		
+		handlers.add(handler);
+	}
+
+	/**
      * Paints the component.
      * @param g The graphics object.
      */
@@ -125,7 +126,7 @@ public class LineGraph extends JPanel {
         int height = getHeight(); 
         int width = getWidth(); 
 
-        GraphUtils.renderYAxis(g2, height, PAD, "Execution Time");
+        GraphUtils.renderYAxis(g2, height, PAD/2, "");
         GraphUtils.renderXAxis(g2, height, width, PAD, "Samples");
 
         AxisCoordinates xAxisCoordinates = new XAxisCoordinates(0, points.size(), 0.0, 10);
@@ -148,11 +149,14 @@ public class LineGraph extends JPanel {
     }
     
     /**
-     * Destroys any existing owning command via the optional command handler.
+     * Destroys any existing owning command vias the optional command handlers.
      */
     public void exit() {
-    	if (handler != null) {
-    		handler.destroyProcess();
+    	if (handlers != null) {
+    		Iterator<CommandHandler> i = handlers.iterator();
+    		while (i.hasNext()) {
+    			i.next().destroyProcess();
+    		}
     	}
     }
     
