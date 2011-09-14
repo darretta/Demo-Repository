@@ -1,7 +1,5 @@
 package com.jboss.demo.mrg.messaging.handler;
 
-
-
 /**
  * Abstract log handler implements some of the more 
  * recurring interface method implementations.

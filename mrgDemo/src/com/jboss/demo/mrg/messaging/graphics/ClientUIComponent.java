@@ -65,6 +65,7 @@ public class ClientUIComponent extends JComponent {
 
     /**
      * Constructor.
+     * @param clientType The client type.
      * @param labelName Component label name.
      */
     public ClientUIComponent(ClientType clientType, String labelName) {
@@ -135,7 +136,15 @@ public class ClientUIComponent extends JComponent {
     	if (isSelected()) {
     		numActiveClientThreads = Integer.parseInt(numThreadsTextField.getText());
     	}
-    	
+
     	return numActiveClientThreads;
+    }
+    
+    /**
+     * Adds an action listener to the underlying check box.
+     * @param l The action listener.
+     */
+    public void addActionListener(ActionListener l) {
+    	clientTypeCheckBox.addActionListener(l);
     }
 }

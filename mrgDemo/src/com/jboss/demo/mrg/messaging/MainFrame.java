@@ -28,10 +28,12 @@ import com.jboss.demo.mrg.messaging.graphics.GraphPoints;
 import com.jboss.demo.mrg.messaging.graphics.LabelTextFieldComponent;
 import com.jboss.demo.mrg.messaging.graphics.LineGraph;
 import com.jboss.demo.mrg.messaging.graphics.ClientUIComponent.ClientType;
+import com.jboss.demo.mrg.messaging.handler.BrokerHandler;
 import com.jboss.demo.mrg.messaging.handler.ClusteredBrokerHandler;
 import com.jboss.demo.mrg.messaging.handler.CommandHandler;
 import com.jboss.demo.mrg.messaging.handler.JTextAreaLogHandler;
 import com.jboss.demo.mrg.messaging.handler.LogHandler;
+import com.jboss.demo.mrg.messaging.handler.LoggingException;
 import com.jboss.demo.mrg.messaging.handler.QpidPerfTestHandler;
 import com.jboss.demo.mrg.messaging.handler.QpidQueueStatsHandler;
 
@@ -55,9 +57,8 @@ public class MainFrame extends JFrame {
      */
     private Collection<CommandHandler> handlers;
     
-    /** The current broker port number, initialized to the default broker port */
-    private int currentPort = Properties.getProperties().getIntegerProperty(
-    		Properties.DEFAULT_BROKER_PORT_STR);
+    /** The current broker port number */
+    private int currentPort;
 
     /**
      * Frame constructor.
@@ -93,7 +94,7 @@ public class MainFrame extends JFrame {
         putComponent(cppClient, contentPane, 10, clientLabel, 25, layout);
         cppClient.setEnabled(Properties.getProperties().getBooleanProperty(
         		Properties.ENABLE_CPP_CLIENT_BTN_STR));
-
+        
         final ClientUIComponent jmsClient = new ClientUIComponent(ClientType.JMS, "JMS");
         contentPane.add(jmsClient);
         putComponent(jmsClient, contentPane, 10, cppClient, 25, layout);
@@ -106,30 +107,31 @@ public class MainFrame extends JFrame {
         pythonClient.setEnabled(Properties.getProperties().getBooleanProperty(
         		Properties.ENABLE_PYTHON_CLIENT_BTN_STR));
 
-        final LabelTextFieldComponent threads = new LabelTextFieldComponent(
+        final LabelTextFieldComponent numBrokersComp = new LabelTextFieldComponent(
               "Number of brokers: ", "1", 10);
-        contentPane.add(threads);
-        putComponent(threads, contentPane, 10, pythonClient, 25, layout);
+        contentPane.add(numBrokersComp);
+        putComponent(numBrokersComp, contentPane, 10, pythonClient, 25, layout);
 
-        final LabelTextFieldComponent messages = new LabelTextFieldComponent(
+        final LabelTextFieldComponent numMessagesPerClientComp = new LabelTextFieldComponent(
               "Number of messages per client thread: ", 
               Properties.getProperties().getStringProperty(Properties.DEFAULT_NUM_MSGS_PER_CLIENT_STR),
               10);
-        contentPane.add(messages);
-        putComponent(messages, contentPane, 10, threads, 25, layout);
+        contentPane.add(numMessagesPerClientComp);
+        putComponent(numMessagesPerClientComp, contentPane, 10, numBrokersComp, 25, layout);
+        
+        // Set to visible only when one of the client buttons are selected.
+        numMessagesPerClientComp.setVisible(false);
 
         final JButton executeBtn = new JButton("Execute");
         contentPane.add(executeBtn);
-        putComponent(executeBtn, contentPane, 10, messages, 25, layout);
-        /*layout.putConstraint(SpringLayout.SOUTH, executeBtn,
-                        35, SpringLayout.SOUTH, messages);*/
+        putComponent(executeBtn, contentPane, 10, numMessagesPerClientComp, 25, layout);
 
         final JButton clearBtn = new JButton("Clear");
         contentPane.add(clearBtn);
         layout.putConstraint(SpringLayout.WEST, clearBtn,
                         10, SpringLayout.EAST, executeBtn);
         layout.putConstraint(SpringLayout.SOUTH, clearBtn,
-                        31, SpringLayout.SOUTH, messages);
+                        31, SpringLayout.SOUTH, numMessagesPerClientComp);
 
         logTextArea = new JTextArea(35,70);
         logTextArea.setEditable(false);
@@ -152,6 +154,24 @@ public class MainFrame extends JFrame {
         		}
         	}
         });
+        
+        cppClient.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+                numMessagesPerClientComp.setVisible(cppClient.isSelected() || pythonClient.isSelected() || jmsClient.isSelected());
+            }
+        });
+
+        jmsClient.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+                numMessagesPerClientComp.setVisible(cppClient.isSelected() || pythonClient.isSelected() || jmsClient.isSelected());
+            }
+        });
+
+        pythonClient.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+                numMessagesPerClientComp.setVisible(cppClient.isSelected() || pythonClient.isSelected() || jmsClient.isSelected());
+            }
+        });
 
         clearBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -168,16 +188,24 @@ public class MainFrame extends JFrame {
 		executeBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					// LogHandler logHandler = new
-					// JTextAreaLogHandler(logTextArea);
-					// final int numMessagesPerThread =
-					// Integer.parseInt(messages.getText());
-					final int numBrokers = Integer.parseInt(threads.getText());
-
-					// Collection<ClientType> clients =
-					// resolveClients(new ClientUIComponent[] { cppClient,
-					// jmsClient, pythonClient });
-
+					// Verify that the client and broker values are valid numbers.
+					try {
+						Integer.parseInt(numBrokersComp.getText());
+						Integer.parseInt(numMessagesPerClientComp.getText());
+						cppClient.getNumActiveClientThreads();
+						jmsClient.getNumActiveClientThreads();
+						pythonClient.getNumActiveClientThreads();
+					} catch (NumberFormatException nfe) {
+						try {
+						    logHandler.logWithNewline("Please ensure the number of brokers " +
+								"and/or number of messages per client is a valid number!");
+						} catch (LoggingException le) {
+							le.printStackTrace();
+						}
+						return;
+					}
+					resetBrokerPort();
+					final int numBrokers = Integer.parseInt(numBrokersComp.getText());
 					Component parent = thisFrame;
 					
 					for (int x = 0; x < numBrokers; x++) {
@@ -214,7 +242,7 @@ public class MainFrame extends JFrame {
 						for (int x = 0; x < cppClient
 								.getNumActiveClientThreads(); x++) {
 							CommandHandler handler = new QpidPerfTestHandler(
-									Integer.valueOf(messages.getText())
+									Integer.valueOf(numMessagesPerClientComp.getText())
 											.intValue(), logHandler);
 							handlers.add(handler);
 							handler.setRetryLimitInMillis(Properties.getProperties().getIntegerProperty(
@@ -222,45 +250,14 @@ public class MainFrame extends JFrame {
 							handler.execute();
 						}
 					}
-					/*
-					 * if (cppRadioBtn.isSelected()) { new
-					 * ClientInvoker(ClientInvoker.ClientEnum.CPP_CLIENT,
-					 * directory.getTextField().getText(), numMessagesPerThread,
-					 * numThreads, logHandler).start(); } else if
-					 * (javaRadioBtn.isSelected()) { new
-					 * ClientInvoker(ClientInvoker.ClientEnum.JAVA_CLIENT,
-					 * directory.getTextField().getText(), numMessagesPerThread,
-					 * numThreads, logHandler).start(); } else { new
-					 * ClientInvoker(ClientInvoker.ClientEnum.JMS_CLIENT,
-					 * directory.getTextField().getText(), numMessagesPerThread,
-					 * numThreads, logHandler).start(); }
-					 */
 				} catch (UnknownHostException uhe) {
-					uhe.printStackTrace();
+					logHandler.log(uhe);
 				}
 			}
 		});
         
         this.pack();
     }
-    
-//    /**
-//     * Resolves all the select client components for thread distinction.
-//     * @param clientComponents The client components.
-//     * @return An array of client types corresponding to each client thread.
-//     */
-//    private Collection<ClientType> resolveClients(ClientUIComponent[] clientComponents) {
-//    	
-//    	Collection<ClientType> clients = new ArrayList<ClientType> ();
-//    	for (int x=0; x < clientComponents.length; x++) {
-//    		int numClients = clientComponents[x].getNumActiveClientThreads();
-//    		for (int y=0; y < numClients; y++) {
-//    			clients.add(clientComponents[x].getClientType());
-//    		}
-//    	}
-//    	
-//    	return clients;
-//    }
     
     /**
      * Binds a graph to it's data sources.
@@ -306,5 +303,26 @@ public class MainFrame extends JFrame {
         layout.putConstraint(SpringLayout.NORTH, component,
                 northRelativeLocation,
                 SpringLayout.NORTH, northRelativeComponent);
+    }
+    
+    /**
+     * Attempts to reset the current broker port. If there are currently no brokers running, then
+     * the port is reset to the default broker port. Otherwise, the current broker port is
+     * left unaltered.
+     */
+    private void resetBrokerPort() {
+    	Iterator<CommandHandler> i = handlers.iterator();
+    	boolean doReset = true;
+    	while (i.hasNext()) {
+    		if (i.next() instanceof BrokerHandler) {
+    			doReset = false;
+    			break;
+    		}
+    	}
+    	
+    	if (doReset) {
+    	    currentPort = Properties.getProperties().getIntegerProperty(
+        		Properties.DEFAULT_BROKER_PORT_STR);
+    	}
     }
 }

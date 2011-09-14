@@ -3,15 +3,21 @@ package com.jboss.demo.mrg.messaging.handler;
 import java.awt.Rectangle;
 import javax.swing.JTextArea;
 
-
-
 /**
  * Log handler for a <code>JTextArea</code>.
  */
 public class JTextAreaLogHandler extends AbstractLogHandler {
 
+	/** The text area to log to */
     private JTextArea textArea;
+    
+    /** 
+     * True if auto scroll is enabled.
+     * @todo This needs more consideration since auto scroll is not working.
+     */
     private boolean isAutoScroll;
+    
+    /** True if the logs should be appended to the current log output */
     private boolean isAppend;
 
     /**

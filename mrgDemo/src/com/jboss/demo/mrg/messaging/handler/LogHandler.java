@@ -1,7 +1,5 @@
 package com.jboss.demo.mrg.messaging.handler;
 
-
-
 /**
  * Log handler interface.
  */

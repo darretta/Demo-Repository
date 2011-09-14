@@ -5,6 +5,7 @@ package com.jboss.demo.mrg.messaging.handler;
  */
 public class LoggingException extends Exception {
 	
+	/** The serial version UID */
 	private static final long serialVersionUID = 1L;
 
 	/**

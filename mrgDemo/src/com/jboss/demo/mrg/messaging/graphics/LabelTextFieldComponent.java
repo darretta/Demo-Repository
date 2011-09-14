@@ -46,6 +46,15 @@ public class LabelTextFieldComponent extends JComponent {
         this.add(label);
         this.add(textField);
     }
+    
+    /**
+     * Sets the visibility of the underlying components.
+     * @param isVisible True if this component is to be visible.
+     */
+    public void setVisible(boolean isVisible) {
+    	label.setVisible(isVisible);
+    	textField.setVisible(isVisible);
+    }
 
     /**
      * Returns the text portion of this component.
