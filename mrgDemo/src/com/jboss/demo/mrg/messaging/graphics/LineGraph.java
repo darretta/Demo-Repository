@@ -28,7 +28,7 @@ public class LineGraph extends JPanel {
 	protected Collection<CommandHandler> handlers;
 
 	/** Padding from the panel edge for rendering chart */
-	protected final int PAD = 40;
+	protected final int PAD = 30;
     
 	/**
 	 * Default constructor. This version creates an empty set of graph points.
@@ -126,7 +126,7 @@ public class LineGraph extends JPanel {
         int height = getHeight(); 
         int width = getWidth(); 
 
-        GraphUtils.renderYAxis(g2, height, PAD/2, "");
+        GraphUtils.renderYAxis(g2, height, PAD, null);
         GraphUtils.renderXAxis(g2, height, width, PAD, "Samples");
 
         AxisCoordinates xAxisCoordinates = new XAxisCoordinates(0, points.size(), 0.0, 10);

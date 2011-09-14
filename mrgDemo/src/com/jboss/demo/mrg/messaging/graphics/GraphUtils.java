@@ -17,8 +17,8 @@ public class GraphUtils {
 	/** Colors array for rendering multiple line in a single chart */
 	protected static final Color[] colors = new Color[] {
 	    Color.BLUE,
-	    Color.DARK_GRAY,
 	    Color.MAGENTA,
+	    Color.DARK_GRAY,
 	    Color.GREEN.darker(),
 	    Color.YELLOW.darker(),
 	    Color.CYAN.darker(),
@@ -44,11 +44,13 @@ public class GraphUtils {
     public static void renderXAxis(Graphics2D g2, int chartHeight, int chartWidth, int chartPadding, String label) {
         new Axis(new Coordinate(chartPadding, chartHeight - chartPadding), 
         		 new Coordinate(chartWidth - chartPadding, chartHeight - chartPadding)).render(g2);
-        new AxisLabel(
+        if (label != null && label.length() > 0) {
+            new AxisLabel(
         		label, 
         		Orientation.HORIZONTAL, 
         		AxisLabel.calculateStartingXPos(g2, label, Orientation.HORIZONTAL, chartWidth, chartPadding), 
         		AxisLabel.calculateStartingYPos(g2, label, Orientation.HORIZONTAL, chartHeight, chartPadding)).render(g2);
+        }
     }
 	
 	/**
@@ -61,11 +63,13 @@ public class GraphUtils {
     public static void renderYAxis(Graphics2D g2, int chartHeight, int chartPadding, String label) {
         new Axis(new Coordinate(chartPadding, chartPadding),
         		 new Coordinate(chartPadding, chartHeight - chartPadding)).render(g2); 
-        new AxisLabel(
+        if (label != null && label.length() > 0) {
+            new AxisLabel(
         		label, 
         		Orientation.VERTICAL, 
         		AxisLabel.calculateStartingXPos(g2, label, Orientation.VERTICAL, 0, chartPadding), 
         		AxisLabel.calculateStartingYPos(g2, label, Orientation.VERTICAL, chartHeight, chartPadding)).render(g2);
+        }
     }
 		
     /**
