@@ -145,7 +145,7 @@ public class LineGraph extends JPanel {
         	GraphUtils.renderLines(g2, height, width, PAD, scale, data, GraphUtils.colors[x++], false);
         }
         
-        GraphUtils.renderLegend(g2, getWidth()-PAD-60, getHeight()-PAD-30, points);
+        GraphUtils.renderLegend(g2, getWidth()-PAD-80, getHeight()-PAD-30, points);
     }
     
     /**
