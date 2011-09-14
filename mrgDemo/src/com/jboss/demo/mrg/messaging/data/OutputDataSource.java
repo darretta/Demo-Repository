@@ -56,7 +56,7 @@ public abstract class OutputDataSource implements DataSource {
 			String line = readLine();
 			while (true) {
 				try {
-				    logHandler.log(line);
+				    logHandler.logWithNewline(line);
 				} catch (LoggingException le) {
 					// Do nothing
 				}

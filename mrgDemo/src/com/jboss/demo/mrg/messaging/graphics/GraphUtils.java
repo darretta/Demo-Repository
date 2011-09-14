@@ -144,10 +144,10 @@ public class GraphUtils {
 				new LineSegment(
 						new Coordinate(
 								chartPadding + (i * increment),
-								chartHeight - chartPadding - (scale * data[i].intValue())),
+								chartHeight - (scale * data[i].intValue())),
 						new Coordinate(
 								chartPadding + ((i + 1) * increment),
-								chartHeight - chartPadding - (scale * data[i+1].intValue())),
+								chartHeight - (scale * data[i+1].intValue())),
 						value,
 						lineColor,
 						doLabel).render(g2);
