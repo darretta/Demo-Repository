@@ -1,5 +1,9 @@
 package com.jboss.demo.mrg.messaging.handler;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
 /**
  * Handler for a clustered QPID broker.
  * @author Mike Darretta
@@ -17,6 +21,8 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 	
 	/** The default data directory prefix */
 	public static final String DEFAULT_DATA_DIR_PREFIX="/tmp/qpid-data-dir-";
+	
+	protected static Collection<Integer> portsInUse;
 	
 	/**
 	 * Constructor. This is identical to <code>this(DEFAULT_CLUSTER_NAME)</code>.
@@ -67,6 +73,7 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 		super(port, logHandler);
 		this.clusterName = clusterName;
 		this.dataDir = dataDir;
+		this.port = resolveNextAvailablePort();
 	}
 
 	/**
@@ -83,6 +90,42 @@ public class ClusteredBrokerHandler extends BrokerHandler {
 	 */
 	public String getDataDir() {
 		return dataDir;
+	}
+	
+	/**
+	 * Resolves the next available port. The algorithm assumes the next available
+	 * port to be the <code>DEFAULT_PORT</code>. If the <code>DEFAULT_PORT</code> is 
+	 * not available, then the port resolves one digit above the highest numbered
+	 * port in use. 
+	 * <br>
+	 * This method is synchronized for thread safety.
+	 * @return The next available port per the described algorithm.
+	 */
+	protected synchronized int resolveNextAvailablePort() {
+		int port = DEFAULT_PORT;
+		
+		if (portsInUse == null) {
+			portsInUse = new ArrayList<Integer> ();
+		} else if (portsInUse.isEmpty() ||
+				!portsInUse.contains(DEFAULT_PORT)) {
+			// Do nothing
+		} else {
+			int portInUse;
+			Iterator<Integer> i = portsInUse.iterator();
+			while (i.hasNext()) {
+				portInUse = i.next();
+				if (portInUse > port) {
+					port = portInUse;
+				}
+			}
+			
+			// Set the port to one digit above the highest port in use.
+			port++;
+		}
+		
+		portsInUse.add(port);
+		
+		return port;
 	}
 
 	/**
