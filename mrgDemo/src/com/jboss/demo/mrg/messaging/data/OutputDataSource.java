@@ -36,11 +36,15 @@ public abstract class OutputDataSource implements DataSource {
 	 * @param consumer The input consumer.
 	 */
 	@Override
-	public void manage(DataSourceConsumer consumer) {		
-		String line = readLine();
-		while (true) {
-			processLine(consumer, line);
-			line = readLine();
+	public void manage(DataSourceConsumer consumer) {	
+		try {
+			String line = readLine();
+			while (true) {
+				processLine(consumer, line);
+				line = readLine();
+			}
+		} catch (IOException io) {
+			io.printStackTrace();
 		}
 	}
 
@@ -55,17 +59,14 @@ public abstract class OutputDataSource implements DataSource {
 	/**
 	 * Reads a line from the output data source.
 	 * @return The read line, up to a newline indication.
+	 * @throws IOException Error reading line.
 	 */
-	protected String readLine() {
+	protected String readLine() throws IOException {
 		StringBuffer buffer = new StringBuffer();
-		try {
-		    char ch = (char) inputStream.read();
-			while (ch != NEWLINE) {
-				buffer.append(ch);
-				ch = (char) inputStream.read();
-			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
+		char ch = (char) inputStream.read();
+		while (ch != NEWLINE) {
+			buffer.append(ch);
+			ch = (char) inputStream.read();
 		}
 		
 		return buffer.toString();

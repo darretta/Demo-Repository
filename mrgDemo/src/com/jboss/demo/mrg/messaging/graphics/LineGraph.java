@@ -149,7 +149,7 @@ public class LineGraph extends JPanel {
     }
     
     /**
-     * Destroys any existing owning command vias the optional command handlers.
+     * Destroys any existing owning command via the optional command handlers.
      */
     public void exit() {
     	if (handlers != null) {
