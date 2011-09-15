@@ -131,12 +131,12 @@ public class GraphUtils {
      * @param chartHeight The chart height.
      * @param chartWidth The chart width.
      * @param chartPadding The chart padding.
-     * @param scale The scale of the graph lines.
+     * @param yScaling The scaling factor for determining Y-coordinate locations.
      * @param data The graph data.
      * @param lineColor The line color.
      */
     public static void renderLines(Graphics2D g2, int chartHeight, int chartWidth, 
-    		int chartPadding, double scale, Integer[] data, Paint lineColor, boolean doLabel) {
+    		int chartPadding, double yScaling, Integer[] data, Paint lineColor, boolean doLabel) {
         double increment = (double) (chartWidth - 2 * chartPadding) / (data.length - 1); 
         for (int i = 0; i < data.length - 1; i++) { 
 			if (!(data[i].equals(Integer.MIN_VALUE))) {
@@ -144,10 +144,10 @@ public class GraphUtils {
 				new LineSegment(
 						new Coordinate(
 								chartPadding + (i * increment),
-								chartHeight - (scale * data[i].intValue())),
+								chartHeight - chartPadding - (yScaling * data[i].intValue())),
 						new Coordinate(
 								chartPadding + ((i + 1) * increment),
-								chartHeight - (scale * data[i+1].intValue())),
+								chartHeight - chartPadding - (yScaling * data[i+1].intValue())),
 						value,
 						lineColor,
 						doLabel).render(g2);
