@@ -1,0 +1,53 @@
+<project name="mrg-m-swing-demo_2.0" basedir="." default="main">
+
+    <property name="src.dir"     value="src"/>
+
+    <property name="build.dir"   value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="jar.dir"     value="${build.dir}/jar"/>
+
+    <property name="main-class"  value="com.jboss.demo.mrg.messaging.Main"/>
+
+    <target name="help"
+            description="Displays the available ant targets">
+        <echo>Available targets:</echo>
+        <echo/>
+        <echo>    clean      :  Clean any existing artifacts</echo>
+        <echo>    compile    :  Compile the source code</echo>
+        <echo>    build      :  Compile the source code and build the jar file</echo>
+        <echo>    run        :  Build and execute the jar file</echo>
+        <echo>    {empty}    :  Execute the 'run' target</echo>
+    </target>
+
+    <target name="clean"
+            description="Cleans any existing artifacts.">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="compile"
+            description="Compiles the code.">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}"/>
+    </target>
+
+    <target name="build" depends="compile"
+            description="Compiles the code and builds the jar file.">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="build"
+            description="Builds and executes the jar file.">
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true"/>
+    </target>
+
+    <target name="clean-build" depends="clean,build"/>
+
+    <target name="main" depends="clean,run"/>
+
+</project>
+
