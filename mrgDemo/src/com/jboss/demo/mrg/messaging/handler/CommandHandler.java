@@ -54,7 +54,7 @@ public abstract class CommandHandler extends Thread {
 		try {
 			while (!done) {
                 this.process = Runtime.getRuntime().exec(getCommand());
-                Thread.sleep(500);
+                Thread.sleep(100);
                 try {
                 	int exitValue = process.exitValue();
                 	
