@@ -76,7 +76,11 @@ public class LineGraphFrame extends JFrame implements Runnable {
         
         this.addWindowListener(new WindowAdapter() {
         	public void windowClosing(WindowEvent e) {
-        		graph.exit();
+        		try {
+        		    graph.exit();
+        		} catch (Exception e2) {
+        			e2.printStackTrace();
+        		}
         	}
         });
         

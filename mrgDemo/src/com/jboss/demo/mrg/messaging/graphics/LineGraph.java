@@ -10,6 +10,7 @@ import java.util.Iterator;
 
 import javax.swing.JPanel;
 
+import com.jboss.demo.mrg.messaging.Properties;
 import com.jboss.demo.mrg.messaging.handler.CommandHandler;
 
 /**
@@ -28,7 +29,8 @@ public class LineGraph extends JPanel {
 	protected Collection<CommandHandler> handlers;
 
 	/** Padding from the panel edge for rendering chart */
-	protected final int PAD = 40;
+	protected final int PAD = Properties.getProperties().getIntegerProperty(
+			Properties.CHART_PADDING_STR);
     
 	/**
 	 * Default constructor. This version creates an empty set of graph points.

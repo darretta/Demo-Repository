@@ -146,7 +146,11 @@ public class MainFrame extends JFrame {
         	public void windowClosing(WindowEvent e) {
         		Iterator<CommandHandler> i = handlers.iterator();
         		while (i.hasNext()) {
-        			i.next().destroyProcess();
+        			try {
+        			    i.next().destroyProcess();
+        			} catch (Exception e2) {
+        				e2.printStackTrace();
+        			}
         		}
         	}
         });

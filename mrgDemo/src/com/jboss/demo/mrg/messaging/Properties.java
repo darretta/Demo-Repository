@@ -91,6 +91,12 @@ public class Properties {
 	/** Default QPID performance test retry limit in milliseconds */
 	private static final int QPID_PERF_TEST_CMD_RETRY_TIME_LIMIT_IN_MILLIS = 5000;
 	
+	/** Chart padding key */
+	public static final String CHART_PADDING_STR = PROP_NAME_PREFIX + "ChartPadding";
+	
+	/** Default chart padding */
+	private static final int CHART_PADDING = 40;
+	
 	/** The underlying properties */
 	private static java.util.Properties properties = new java.util.Properties();
 	
@@ -140,6 +146,7 @@ public class Properties {
 		properties.put(QPID_CMD_STR, QPID_CMD);
 		properties.put(QPID_PERF_TEST_CMD_RETRY_TIME_LIMIT_IN_MILLIS_STR, 
 				QPID_PERF_TEST_CMD_RETRY_TIME_LIMIT_IN_MILLIS);
+		properties.put(CHART_PADDING_STR, CHART_PADDING);
 	}
 	
 	/**
