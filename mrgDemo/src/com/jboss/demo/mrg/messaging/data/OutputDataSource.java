@@ -18,12 +18,21 @@ public abstract class OutputDataSource implements DataSource {
 	/** New line indicator */
 	public static final char NEWLINE = '\n';
 	
-	/** The log handler */
+	/** The optional log handler */
 	protected LogHandler logHandler;
+	
+	/**
+	 * Constructor for a null log handler.
+	 * @param inputStream The input stream.
+	 */
+	public OutputDataSource(InputStream inputStream) {
+		this(inputStream, null);
+	}
 
 	/**
 	 * Constructor.
 	 * @param inputStream The input stream.
+	 * @param logHandler The optional log handler.
 	 */
 	public OutputDataSource(InputStream inputStream, LogHandler logHandler) {
 		this.inputStream = inputStream;
@@ -55,10 +64,12 @@ public abstract class OutputDataSource implements DataSource {
 		try {
 			String line = readLine();
 			while (true) {
-				try {
-				    logHandler.logWithNewline(line);
-				} catch (LoggingException le) {
-					// Do nothing
+				if (logHandler != null) {
+					try {
+						logHandler.logWithNewline(line);
+					} catch (LoggingException le) {
+						// Do nothing
+					}
 				}
 				processLine(consumer, line);
 				line = readLine();

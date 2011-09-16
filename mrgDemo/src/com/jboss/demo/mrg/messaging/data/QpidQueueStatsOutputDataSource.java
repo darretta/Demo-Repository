@@ -15,6 +15,9 @@ public class QpidQueueStatsOutputDataSource extends OutputDataSource {
 	/** The column to process */
 	protected int columnToProcess;
 	
+	/** The optional aggregate data source to aggregate with out data sources */
+	protected AggregateDataSource aggregateDataSource;
+	
 	/** The queue name column number */
 	public static final int QUEUE_NAME_COLUMN = 1;
 	
@@ -31,10 +34,25 @@ public class QpidQueueStatsOutputDataSource extends OutputDataSource {
 	public static final int DEQ_RATE_COLUMN = 5;
 	
 	/**
+	 * Constructor for required attributes. This constructor assumes a null log handler
+	 * and aggregate data source.
+	 * @param inputStream The input stream.
+	 * @param int columnToProcess The column to process.
+	 */
+	public QpidQueueStatsOutputDataSource(InputStream inputStream, int columnToProcess) {
+		this(inputStream, columnToProcess, null, null);
+	}
+	
+	/**
 	 * Constructor.
 	 * @param inputStream The input stream.
+	 * @param int columnToProcess The column to process.
+	 * @param logHandler The optional log handler.
+	 * @param aggregateDataSource The optional aggregate data source for aggregating with out data sources.
 	 */
-	public QpidQueueStatsOutputDataSource(InputStream inputStream, int columnToProcess, LogHandler logHandler) {
+	public QpidQueueStatsOutputDataSource(
+			InputStream inputStream, int columnToProcess, 
+			AggregateDataSource aggregateDataSource, LogHandler logHandler) {
 		super(inputStream, logHandler);
 		this.columnToProcess = columnToProcess;
 	}
@@ -57,7 +75,11 @@ public class QpidQueueStatsOutputDataSource extends OutputDataSource {
 					token = tokenizer.nextToken();
 				}
 
-				consumer.update(Double.valueOf(token).intValue());
+				int data = Double.valueOf(token).intValue();
+				consumer.update(data);
+				if (aggregateDataSource != null) {
+					aggregateDataSource.updateData(data);
+				}
 			}
 		}
 	}

@@ -22,6 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
 
+import com.jboss.demo.mrg.messaging.data.AggregateDataSource;
 import com.jboss.demo.mrg.messaging.data.DataSourceController;
 import com.jboss.demo.mrg.messaging.data.QpidQueueStatsOutputDataSource;
 import com.jboss.demo.mrg.messaging.graphics.ClientUIComponent;
@@ -239,18 +240,26 @@ public class MainFrame extends JFrame {
 						String hostname = Properties.getProperties().getStringProperty(
 								Properties.DEFAULT_HOSTNAME_STR);
 						String ipAddress = InetAddress.getByName(hostname).getHostAddress();
+						
+						AggregateDataSource aggregateDataSource = new AggregateDataSource();
+						GraphPoints points = new GraphPoints(20, "Transfer Rate");
+						lineGraph.addPoints(points);
+						
+						new DataSourceController(aggregateDataSource, points).start();
 
 						bindGraphToSource(lineGraph,
 								ipAddress,
 								handler.getPort(),
 								QpidQueueStatsOutputDataSource.ENQ_RATE_COLUMN,
 								"Enqueue Rate",
+								aggregateDataSource,
 								logHandler);
 						bindGraphToSource(lineGraph,
 								ipAddress,
 								handler.getPort(),
 								QpidQueueStatsOutputDataSource.DEQ_RATE_COLUMN,
 								"Dequeue Rate",
+								aggregateDataSource,
 								logHandler);
 						LineGraphFrame lgf = new LineGraphFrame(parent,
 								lineGraph, ipAddress + ":" + handler.getPort());
@@ -286,10 +295,12 @@ public class MainFrame extends JFrame {
      * @param port The port number for the data source.
      * @param columnNumber The column number of the qpid-queue-stats output.
      * @param graphName The name of the graph for presentation.
+     * @param aggregateDataSource The aggregate data source.
      * @param logHandler The log handler to manage output.
      */
     private void bindGraphToSource(LineGraph lineGraph, String ipAddress, int port, 
-    		int columnNumber, String graphName, LogHandler logHandler) {
+    		int columnNumber, String graphName, 
+    		AggregateDataSource aggregateDataSource, LogHandler logHandler) {
 
 		CommandHandler qpidQueueStatsHandler = new QpidQueueStatsHandler(ipAddress, port, logHandler);
 		lineGraph.addHandler(qpidQueueStatsHandler);
@@ -297,7 +308,8 @@ public class MainFrame extends JFrame {
 		qpidQueueStatsHandler.execute();
 
 		QpidQueueStatsOutputDataSource source = new QpidQueueStatsOutputDataSource(
-				qpidQueueStatsHandler.getProcess().getInputStream(), columnNumber, logHandler);
+				qpidQueueStatsHandler.getProcess().getInputStream(), 
+				columnNumber, aggregateDataSource, logHandler);
 
 		GraphPoints points = new GraphPoints(20, graphName);
 		lineGraph.addPoints(points);
