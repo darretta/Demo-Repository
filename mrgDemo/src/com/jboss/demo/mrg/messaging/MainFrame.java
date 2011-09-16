@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -28,6 +29,7 @@ import com.jboss.demo.mrg.messaging.graphics.GraphPoints;
 import com.jboss.demo.mrg.messaging.graphics.LabelTextFieldComponent;
 import com.jboss.demo.mrg.messaging.graphics.LineGraph;
 import com.jboss.demo.mrg.messaging.graphics.ClientUIComponent.ClientType;
+import com.jboss.demo.mrg.messaging.handler.BrokerHandler;
 import com.jboss.demo.mrg.messaging.handler.ClusteredBrokerHandler;
 import com.jboss.demo.mrg.messaging.handler.CommandHandler;
 import com.jboss.demo.mrg.messaging.handler.JTextAreaLogHandler;
@@ -102,11 +104,16 @@ public class MainFrame extends JFrame {
         putComponent(pythonClient, contentPane, 10, jmsClient, 25, layout);
         pythonClient.setEnabled(Properties.getProperties().getBooleanProperty(
         		Properties.ENABLE_PYTHON_CLIENT_BTN_STR));
+        
+        final JCheckBox enableClusteringCB = new JCheckBox("Enable clustering?");
+        contentPane.add(enableClusteringCB);
+        putComponent(enableClusteringCB, contentPane, 10, pythonClient, 25, layout);
 
         final LabelTextFieldComponent numBrokersComp = new LabelTextFieldComponent(
               "Number of brokers: ", "1", 10);
         contentPane.add(numBrokersComp);
-        putComponent(numBrokersComp, contentPane, 10, pythonClient, 25, layout);
+        putComponent(numBrokersComp, enableClusteringCB, 150, pythonClient, 27, layout);
+        numBrokersComp.setVisible(false);
 
         final LabelTextFieldComponent numMessagesPerClientComp = new LabelTextFieldComponent(
               "Number of messages per client thread: ", 
@@ -172,6 +179,12 @@ public class MainFrame extends JFrame {
                 numMessagesPerClientComp.setVisible(cppClient.isSelected() || pythonClient.isSelected() || jmsClient.isSelected());
             }
         });
+        
+        enableClusteringCB.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		numBrokersComp.setVisible(enableClusteringCB.isSelected());
+        	}
+        });
 
         clearBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -209,7 +222,14 @@ public class MainFrame extends JFrame {
 					Component parent = thisFrame;
 					
 					for (int x = 0; x < numBrokers; x++) {
-						ClusteredBrokerHandler handler = new ClusteredBrokerHandler(logHandler);
+						BrokerHandler handler;
+						
+						if (enableClusteringCB.isSelected()) {
+						    handler = new ClusteredBrokerHandler(logHandler);
+						} else {
+							handler = new BrokerHandler(logHandler);
+						}
+						
 						handlers.add(handler);
 						handler.execute();
 
