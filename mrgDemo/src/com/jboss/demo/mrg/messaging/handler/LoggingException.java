@@ -2,6 +2,7 @@ package com.jboss.demo.mrg.messaging.handler;
 
 /**
  * Logging exception.
+ * @author Mike Darretta
  */
 public class LoggingException extends Exception {
 	

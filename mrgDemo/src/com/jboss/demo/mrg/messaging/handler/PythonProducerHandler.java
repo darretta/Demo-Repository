@@ -3,16 +3,16 @@ package com.jboss.demo.mrg.messaging.handler;
 import com.jboss.demo.mrg.messaging.Properties;
 
 /**
- * Handler for the qpid-perftest command.
+ * Handler for the AMQP 1.0 reference implementation Python consumer.
  * @author Mike Darretta
  */
-public class QpidPerfTestHandler extends AbstractProducerHandler {
+public class PythonProducerHandler extends AbstractProducerHandler {
 
 	/**
 	 * Constructor for the default number of messages.
 	 * @param logHandler The log handler.
 	 */
-	public QpidPerfTestHandler(LogHandler logHandler) {
+	public PythonProducerHandler(LogHandler logHandler) {
 		super(logHandler);
 	}
 	
@@ -21,17 +21,18 @@ public class QpidPerfTestHandler extends AbstractProducerHandler {
 	 * @param numMessages The number of messages to send.
 	 * @param logHandler The log handler.
 	 */
-	public QpidPerfTestHandler(int numMessages, LogHandler logHandler) {
+	public PythonProducerHandler(int numMessages, LogHandler logHandler) {
 		super(numMessages, logHandler);
 	}
 	
 	/**
-	 * Returns the command string.
-	 * The command string.
+	 * Returns the command.
+	 * @return The command.
 	 */
 	@Override
 	protected String getCommand() {
 		return Properties.getProperties().getProperty(
-				Properties.QPID_PERF_TEST_CMD_STR) + " --count " + numMessages;
+				Properties.AMQP_1_0_PYTHON_CLIENT_PRODUCER_CMD_STR) + " queue1 --count " + numMessages +
+				    " Python client message";
 	}
 }

@@ -72,6 +72,7 @@ public abstract class CommandHandler extends Thread {
                     handleProcess();
                 }
 			}
+	        logHandler.logWithNewline("Exiting thread [" + this.getThreadGroup() + "]");
         } catch (Throwable t) {
             logHandler.log(t);
         }

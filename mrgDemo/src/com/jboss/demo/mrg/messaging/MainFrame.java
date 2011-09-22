@@ -36,6 +36,8 @@ import com.jboss.demo.mrg.messaging.handler.CommandHandler;
 import com.jboss.demo.mrg.messaging.handler.JTextAreaLogHandler;
 import com.jboss.demo.mrg.messaging.handler.LogHandler;
 import com.jboss.demo.mrg.messaging.handler.LoggingException;
+import com.jboss.demo.mrg.messaging.handler.PythonConsumerHandler;
+import com.jboss.demo.mrg.messaging.handler.PythonProducerHandler;
 import com.jboss.demo.mrg.messaging.handler.QpidPerfTestHandler;
 import com.jboss.demo.mrg.messaging.handler.QpidQueueStatsHandler;
 
@@ -241,7 +243,7 @@ public class MainFrame extends JFrame {
 								Properties.DEFAULT_HOSTNAME_STR);
 						String ipAddress = InetAddress.getByName(hostname).getHostAddress();
 						
-						AggregateDataSource aggregateDataSource = new AggregateDataSource();
+						AggregateDataSource aggregateDataSource = new AggregateDataSource(2);
 						GraphPoints points = new GraphPoints(20, "Transfer Rate");
 						lineGraph.addPoints(points);
 						
@@ -250,17 +252,18 @@ public class MainFrame extends JFrame {
 						bindGraphToSource(lineGraph,
 								ipAddress,
 								handler.getPort(),
-								QpidQueueStatsOutputDataSource.ENQ_RATE_COLUMN,
-								"Enqueue Rate",
+								QpidQueueStatsOutputDataSource.DEQ_RATE_COLUMN,
+								"Dequeue Rate",
 								aggregateDataSource,
 								logHandler);
 						bindGraphToSource(lineGraph,
 								ipAddress,
 								handler.getPort(),
-								QpidQueueStatsOutputDataSource.DEQ_RATE_COLUMN,
-								"Dequeue Rate",
+								QpidQueueStatsOutputDataSource.ENQ_RATE_COLUMN,
+								"Enqueue Rate",
 								aggregateDataSource,
 								logHandler);
+
 						LineGraphFrame lgf = new LineGraphFrame(parent,
 								lineGraph, ipAddress + ":" + handler.getPort());
 						new Thread(lgf).start();
@@ -278,6 +281,29 @@ public class MainFrame extends JFrame {
 									Properties.QPID_PERF_TEST_CMD_RETRY_TIME_LIMIT_IN_MILLIS_STR));
 							handler.execute();
 						}
+					} else if (pythonClient.isEnabled()) {
+						for (int x = 0; x < pythonClient
+								.getNumActiveClientThreads(); x++) {
+							PythonProducerHandler producerHandler = new PythonProducerHandler(
+									Integer.valueOf(numMessagesPerClientComp.getText())
+											.intValue(), logHandler);
+							handlers.add(producerHandler);
+							producerHandler.setRetryLimitInMillis(Properties
+									.getProperties()
+									.getIntegerProperty(
+											Properties.QPID_PERF_TEST_CMD_RETRY_TIME_LIMIT_IN_MILLIS_STR));
+							producerHandler.execute();
+							
+							PythonConsumerHandler consumerHandler = new PythonConsumerHandler(
+									producerHandler.getNumMessages(), logHandler);
+							handlers.add(consumerHandler);
+							consumerHandler.setRetryLimitInMillis(Properties
+									.getProperties()
+									.getIntegerProperty(
+											Properties.QPID_PERF_TEST_CMD_RETRY_TIME_LIMIT_IN_MILLIS_STR));
+							consumerHandler.execute();							
+						}
+						
 					}
 				} catch (UnknownHostException uhe) {
 					logHandler.log(uhe);

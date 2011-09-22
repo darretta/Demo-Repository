@@ -72,6 +72,20 @@ public class Properties {
 	/** Default QPID perf-test command */
 	private static final String QPID_PERF_TEST_CMD = "qpid-perftest";
 	
+	/** AMQP 1.0 Python producer client command key */
+	public static final String AMQP_1_0_PYTHON_CLIENT_PRODUCER_CMD_STR = 
+		PROP_NAME_PREFIX + "AMQP1.0PythonProducerClient";
+	
+	/** Default AMQP 1.0 Python producer client command */
+	private static final String AMQP_1_0_PYTHON_CLIENT_PRODUCER_CMD = "send";
+	
+	/** AMQP 1.0 Python consumer client command key */
+	public static final String AMQP_1_0_PYTHON_CLIENT_CONSUMER_CMD_STR = 
+		PROP_NAME_PREFIX + "AMQP1.0PythonConsumerClient";
+	
+	/** Default AMQP 1.0 Python consumer client command */
+	private static final String AMQP_1_0_PYTHON_CLIENT_CONSUMER_CMD = "recv";
+	
 	/** QPID queue stats command key */
 	public static final String QPID_QUEUE_STATS_CMD_STR = PROP_NAME_PREFIX + "QpidQueueStatsCmd";
 	
@@ -142,6 +156,10 @@ public class Properties {
 		properties.put(DEFAULT_NUM_MSGS_PER_CLIENT_STR, DEFAULT_NUM_MSGS_PER_CLIENT);
 		properties.put(DEFAULT_BROKER_PORT_STR, DEFAULT_BROKER_PORT);
 		properties.put(QPID_PERF_TEST_CMD_STR, QPID_PERF_TEST_CMD);
+		properties.put(AMQP_1_0_PYTHON_CLIENT_PRODUCER_CMD_STR, 
+				AMQP_1_0_PYTHON_CLIENT_PRODUCER_CMD);
+		properties.put(AMQP_1_0_PYTHON_CLIENT_CONSUMER_CMD_STR, 
+				AMQP_1_0_PYTHON_CLIENT_CONSUMER_CMD);
 		properties.put(QPID_QUEUE_STATS_CMD_STR, QPID_QUEUE_STATS_CMD);
 		properties.put(QPID_CMD_STR, QPID_CMD);
 		properties.put(QPID_PERF_TEST_CMD_RETRY_TIME_LIMIT_IN_MILLIS_STR, 

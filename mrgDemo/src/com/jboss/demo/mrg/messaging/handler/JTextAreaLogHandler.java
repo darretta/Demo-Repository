@@ -5,6 +5,7 @@ import javax.swing.JTextArea;
 
 /**
  * Log handler for a <code>JTextArea</code>.
+ * @author Mike Darretta
  */
 public class JTextAreaLogHandler extends AbstractLogHandler {
 

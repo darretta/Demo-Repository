@@ -37,7 +37,7 @@ public class QpidQueueStatsOutputDataSource extends OutputDataSource {
 	 * Constructor for required attributes. This constructor assumes a null log handler
 	 * and aggregate data source.
 	 * @param inputStream The input stream.
-	 * @param int columnToProcess The column to process.
+	 * @param columnToProcess The column to process.
 	 */
 	public QpidQueueStatsOutputDataSource(InputStream inputStream, int columnToProcess) {
 		this(inputStream, columnToProcess, null, null);
@@ -46,7 +46,7 @@ public class QpidQueueStatsOutputDataSource extends OutputDataSource {
 	/**
 	 * Constructor.
 	 * @param inputStream The input stream.
-	 * @param int columnToProcess The column to process.
+	 * @param columnToProcess columnToProcess The column to process.
 	 * @param logHandler The optional log handler.
 	 * @param aggregateDataSource The optional aggregate data source for aggregating with out data sources.
 	 */
